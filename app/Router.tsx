@@ -2,13 +2,16 @@ import "react-native-gesture-handler";
 import React, { FunctionComponent, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { Text } from "react-native";
 
 const { Screen, Navigator } = createStackNavigator();
 
-import HabitsScreen from "@app/screens/HabitsScreen";
 import useLoadFonts from "@app/hooks/useLoadFonts";
-import { Text } from "react-native";
+
 import useUser from "@app/hooks/useUser";
+
+import HabitsScreen from "@app/screens/HabitsScreen";
+import NewHabitScreen from "@app/screens/NewHabitScreen";
 
 const Router: FunctionComponent = () => {
   const [fontsLoaded] = useLoadFonts();
@@ -22,8 +25,9 @@ const Router: FunctionComponent = () => {
 
   return (
     <NavigationContainer>
-      <Navigator>
+      <Navigator screenOptions={{ headerShown: false }}>
         <Screen name={"HabitsScreen"} component={HabitsScreen} />
+        <Screen name={"NewHabitScreen"} component={NewHabitScreen} />
       </Navigator>
     </NavigationContainer>
   );

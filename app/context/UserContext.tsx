@@ -8,6 +8,7 @@ export interface ContextState {
   loading: boolean;
   initialLoad: () => void;
   saveUser: () => void;
+  handleAddHabit: (habit: Habit) => void;
 }
 
 const UserContext = createContext<ContextState | null>(null);
@@ -32,13 +33,27 @@ const UserProvider: FunctionComponent = ({ children }) => {
     setIsUserLoaded(true);
   };
 
+  const handleAddHabit = async (habit: Habit) => {
+    if (user === null) return;
+
+    setUser({ ...user, habits: [...user.habits, habit] });
+    await saveUser();
+  };
+
   const saveUser = async () => {
     await SecureStore.setItemAsync("user", JSON.stringify(user));
   };
 
   return (
     <UserContext.Provider
-      value={{ user, initialLoad, isUserLoaded, loading, saveUser }}
+      value={{
+        user,
+        initialLoad,
+        isUserLoaded,
+        loading,
+        saveUser,
+        handleAddHabit,
+      }}
     >
       {children}
     </UserContext.Provider>
