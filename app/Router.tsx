@@ -15,13 +15,13 @@ import NewHabitScreen from "@app/screens/NewHabitScreen";
 
 const Router: FunctionComponent = () => {
   const [fontsLoaded] = useLoadFonts();
-  const { isUserLoaded, initialLoad } = useUser();
+  const { isUserLoaded, initialLoad, user } = useUser();
 
   useEffect(() => {
     initialLoad();
   }, []);
 
-  if (!fontsLoaded || !isUserLoaded) return <Text>Loading...</Text>;
+  if (!fontsLoaded || !isUserLoaded || !user) return <Text>Loading...</Text>;
 
   return (
     <NavigationContainer>

@@ -21,9 +21,10 @@ import Label from "@app/components/atoms/Label";
 import Button from "@app/components/atoms/Button";
 import useUser from "@app/hooks/useUser";
 import { generateUUID } from "@app/utils/uuid";
+import { createNewHabit } from "@app/mutations/habit";
 
 const NewHabitScreen: FunctionComponent = () => {
-  const { handleAddHabit } = useUser();
+  const { updateUser, user } = useUser();
 
   const [name, setName] = useState<string>("");
   const [repeat, setRepeat] = useState<number[]>([]);
@@ -47,8 +48,11 @@ const NewHabitScreen: FunctionComponent = () => {
     [0, 1, 2, 3, 4, 5, 6].every((item) => repeat.includes(item));
 
   const handleCreateHabit = async () => {
+    if (!user) return;
+
     const newHabit = { _id: generateUUID(), name, repeat, history: [] };
-    await handleAddHabit(newHabit);
+    updateUser(createNewHabit(user, newHabit));
+
     navigation.goBack();
   };
 

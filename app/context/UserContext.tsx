@@ -1,4 +1,9 @@
-import React, { createContext, FunctionComponent, useState } from "react";
+import React, {
+  createContext,
+  FunctionComponent,
+  useState,
+  useEffect,
+} from "react";
 import * as SecureStore from "expo-secure-store";
 import { createLocalUser } from "@app/utils/userUtils";
 
@@ -8,7 +13,7 @@ export interface ContextState {
   loading: boolean;
   initialLoad: () => void;
   saveUser: () => void;
-  handleAddHabit: (habit: Habit) => void;
+  updateUser: (user: User) => void;
 }
 
 const UserContext = createContext<ContextState | null>(null);
@@ -33,16 +38,17 @@ const UserProvider: FunctionComponent = ({ children }) => {
     setIsUserLoaded(true);
   };
 
-  const handleAddHabit = async (habit: Habit) => {
-    if (user === null) return;
-
-    setUser({ ...user, habits: [...user.habits, habit] });
-    await saveUser();
+  const updateUser = async (newUser: User) => {
+    setUser({ ...newUser });
   };
 
   const saveUser = async () => {
     await SecureStore.setItemAsync("user", JSON.stringify(user));
   };
+
+  useEffect(() => {
+    saveUser().then();
+  }, [user]);
 
   return (
     <UserContext.Provider
@@ -52,7 +58,7 @@ const UserProvider: FunctionComponent = ({ children }) => {
         isUserLoaded,
         loading,
         saveUser,
-        handleAddHabit,
+        updateUser,
       }}
     >
       {children}

@@ -1,11 +1,12 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
-import MainTemplate from "@app/templates/MainTemplate";
-import Typography from "@app/components/atoms/Typography";
 
 import { getDaysInMonth } from "@app/utils/date";
+import useUser from "@app/hooks/useUser";
+
+import MainTemplate from "@app/templates/MainTemplate";
+import Typography from "@app/components/atoms/Typography";
 import HabitsHeader from "@app/components/organisms/HabitsHeader";
 import HabitsList from "@app/components/organisms/HabitsList";
-import useUser from "@app/hooks/useUser";
 
 const HabitsScreen: FunctionComponent = () => {
   const { user } = useUser();
@@ -17,12 +18,23 @@ const HabitsScreen: FunctionComponent = () => {
   const getInitialIndex = (): number =>
     days.findIndex((item) => item.getDate() == new Date().getDate());
 
+  const getInitialDate = (): Date => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    today.setUTCDate(today.getUTCDate());
+    return today;
+  };
+
+  const [selectedDate, setSelectedDate] = useState<Date>(getInitialDate());
   const [selectedDay, setSelectedDay] = useState<number>(getInitialIndex());
+  const [habits, setHabits] = useState<Habit[]>(user?.habits || []);
+
   const selectDay = (index: number): void => {
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
     today.setUTCDate(index + 1);
 
+    setSelectedDate(today);
     setSelectedDay(index);
   };
 
@@ -35,40 +47,20 @@ const HabitsScreen: FunctionComponent = () => {
       });
   }, [selectedDay]);
 
-  let habits: Habit[] = [];
-
-  // Filters the habits by repeat and adds status to every habit
-  user?.habits.map((habit: Habit) => {
+  useEffect(() => {
     const today = new Date();
     const dayOfWeek = new Date(
       today.getUTCFullYear(),
       today.getUTCMonth(),
       selectedDay + 1
     ).getDay();
-    if (!habit.repeat.includes(dayOfWeek)) return;
 
-    let _habit: any = {
-      _id: habit._id,
-      name: habit.name,
-      status: "undone",
-    };
-
-    habit.history.map((history) => {
-      const day: number = new Date(history.date).getUTCDate();
-      const month: number = new Date(history.date).getUTCMonth();
-      const year: number = new Date(history.date).getUTCFullYear();
-
-      if (month !== new Date().getUTCMonth()) return;
-      if (year !== new Date().getUTCFullYear()) return;
-
-      if (day == selectedDay + 1) {
-        _habit.status = history.status;
-        _habit.history = history;
-      }
-    });
-
-    habits.push(_habit);
-  });
+    setHabits([
+      ...(user?.habits.filter((habit: Habit) =>
+        habit.repeat.includes(dayOfWeek)
+      ) || []),
+    ]);
+  }, [user]);
 
   return (
     <>
@@ -83,7 +75,9 @@ const HabitsScreen: FunctionComponent = () => {
           Your Progress
         </Typography>
 
-        {habits.length > 0 && <HabitsList habits={habits} />}
+        {habits.length > 0 && (
+          <HabitsList habits={habits} selectedDate={selectedDate} />
+        )}
       </MainTemplate>
     </>
   );

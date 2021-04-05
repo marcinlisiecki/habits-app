@@ -3,16 +3,30 @@ import Typography from "@app/components/atoms/Typography";
 
 interface Props {
   habit: Habit;
+  date: Date;
 }
 
 import { StyledWrapper } from "./styles";
+import useUser from "@app/hooks/useUser";
+import { changeHabitState } from "@app/mutations/habit";
 
-const HabitsListItem: FunctionComponent<Props> = ({ habit }) => {
-  const { name, status } = habit;
+const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
+  const { user, updateUser } = useUser();
+
+  const { name } = habit;
   const streak = 1;
 
+  const status: string =
+    habit?.history?.find((item) => item?.date == date.toISOString())?.status ||
+    "undone";
+
+  const handleClick = async () => {
+    if (!user) return;
+    await updateUser(changeHabitState({ user, habit, date }));
+  };
+
   return (
-    <StyledWrapper>
+    <StyledWrapper onPress={handleClick}>
       <Typography size={"h5"} weight={600}>
         {name}
       </Typography>
@@ -21,7 +35,8 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit }) => {
         weight={500}
         letterSpacing={"1px"}
       >
-        {streak} days streak, {status}
+        {status}
+        {/*{streak} days streak, {status}*/}
       </Typography>
     </StyledWrapper>
   );
