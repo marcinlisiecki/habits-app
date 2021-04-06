@@ -7,7 +7,7 @@ interface WrapperProps {
 export const StyledWrapper = styled.TouchableOpacity<WrapperProps>`
   background-color: ${({ theme }) => theme.colors.background.secondary};
   min-width: 100%;
-  padding: 16px;
+  padding: 16px 16px 16px 24px;
   margin-bottom: 10px;
   border-width: 1px;
   border-radius: 10px;

@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import Typography from "@app/components/atoms/Typography";
+import moment from "moment";
 
 import useUser from "@app/hooks/useUser";
 import { changeHabitStatus } from "@app/mutations/habit";
@@ -11,11 +12,46 @@ interface Props {
   date: Date;
 }
 
+const calculateStreak = (habit: Habit) => {
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  let streak = 0;
+  let currentDate = today;
+
+  const subtractDay = (date: Date) => {
+    return moment(date).subtract(1, "day").toDate();
+  };
+
+  const findIndexOfHistory = (date: Date) =>
+    habit.history.findIndex((item) =>
+      moment(item.date).isSame(date.toISOString())
+    );
+
+  if (
+    findIndexOfHistory(currentDate) === -1 ||
+    habit.history[findIndexOfHistory(currentDate)].status === "undone"
+  ) {
+    currentDate = subtractDay(currentDate);
+  }
+
+  while (
+    findIndexOfHistory(currentDate) !== -1 &&
+    habit.history[findIndexOfHistory(currentDate)].status !== "undone"
+  ) {
+    currentDate = subtractDay(currentDate);
+
+    streak++;
+  }
+
+  return streak;
+};
+
 const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
   const { user, updateUser } = useUser();
 
   const { name } = habit;
-  const streak = 1;
+  const streak = calculateStreak(habit);
 
   const status: string =
     habit?.history?.find((item) => item?.date == date.toISOString())?.status ||
@@ -36,8 +72,7 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
         weight={500}
         letterSpacing={"1px"}
       >
-        {status}
-        {/*{streak} days streak, {status}*/}
+        {streak} days streak
       </Typography>
     </StyledWrapper>
   );
