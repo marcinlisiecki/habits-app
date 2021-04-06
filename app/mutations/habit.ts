@@ -11,7 +11,7 @@ interface ChangeHabitStateProps {
   habit: Habit;
 }
 
-export const changeHabitState = ({
+export const changeHabitStatus = ({
   user,
   date,
   habit,

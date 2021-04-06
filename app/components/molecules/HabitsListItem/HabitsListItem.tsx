@@ -1,14 +1,15 @@
 import React, { FunctionComponent } from "react";
 import Typography from "@app/components/atoms/Typography";
 
+import useUser from "@app/hooks/useUser";
+import { changeHabitStatus } from "@app/mutations/habit";
+
+import { StyledWrapper } from "./styles";
+
 interface Props {
   habit: Habit;
   date: Date;
 }
-
-import { StyledWrapper } from "./styles";
-import useUser from "@app/hooks/useUser";
-import { changeHabitState } from "@app/mutations/habit";
 
 const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
   const { user, updateUser } = useUser();
@@ -22,11 +23,11 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
 
   const handleClick = async () => {
     if (!user) return;
-    await updateUser(changeHabitState({ user, habit, date }));
+    await updateUser(changeHabitStatus({ user, habit, date }));
   };
 
   return (
-    <StyledWrapper onPress={handleClick}>
+    <StyledWrapper onPress={handleClick} status={status}>
       <Typography size={"h5"} weight={600}>
         {name}
       </Typography>

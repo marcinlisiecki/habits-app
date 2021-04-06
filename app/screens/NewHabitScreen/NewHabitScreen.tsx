@@ -23,11 +23,18 @@ import useUser from "@app/hooks/useUser";
 import { generateUUID } from "@app/utils/uuid";
 import { createNewHabit } from "@app/mutations/habit";
 
+interface ValidationError {
+  path: string;
+  message: string;
+}
+
 const NewHabitScreen: FunctionComponent = () => {
   const { updateUser, user } = useUser();
 
   const [name, setName] = useState<string>("");
   const [repeat, setRepeat] = useState<number[]>([]);
+  const [error, setError] = useState<ValidationError | null>(null);
+
   const navigation = useNavigation<StackNavigationProp<StackParams>>();
 
   const handleSelectRepeat = (value: number) => {
@@ -49,6 +56,22 @@ const NewHabitScreen: FunctionComponent = () => {
 
   const handleCreateHabit = async () => {
     if (!user) return;
+
+    if (name.length <= 0) {
+      setError({
+        path: "name",
+        message: "Name is required",
+      });
+      return;
+    }
+
+    if (repeat.length <= 0) {
+      setError({
+        path: "repeat",
+        message: "You need to specify when you want repeat habit",
+      });
+      return;
+    }
 
     const newHabit = { _id: generateUUID(), name, repeat, history: [] };
     updateUser(createNewHabit(user, newHabit));
@@ -81,6 +104,11 @@ const NewHabitScreen: FunctionComponent = () => {
           value={name}
           onChange={(text) => setName(text)}
         />
+        {error?.path === "name" && (
+          <Typography color={"error"} margin={"4px 0 0 0"}>
+            {error.message}
+          </Typography>
+        )}
 
         <Label margin={"20px 0 4px 0"}>When?</Label>
         <StyledSelectRepeatWrapper>
@@ -161,6 +189,11 @@ const NewHabitScreen: FunctionComponent = () => {
             </Typography>
           </StyledSelectRepeatBottom>
         </StyledSelectRepeatWrapper>
+        {error?.path === "repeat" && (
+          <Typography color={"error"} margin={"4px 0 0 0"}>
+            {error.message}
+          </Typography>
+        )}
 
         <Button onPress={handleCreateHabit}>Create</Button>
       </MainTemplate>
