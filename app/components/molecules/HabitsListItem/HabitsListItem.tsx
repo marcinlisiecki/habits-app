@@ -18,8 +18,22 @@ const calculateStreak = (habit: Habit, date: Date) => {
   let streak = 0;
   let currentDate = date;
 
+  const getSubtractValue = () => {
+    habit.repeat.sort((a, b) => a - b);
+
+    const dayOfWeek = currentDate.getDay();
+    const index = habit.repeat.indexOf(dayOfWeek);
+
+    if (habit.repeat.length == 1) return 7;
+    if (index > 0) {
+      return habit.repeat[index] - habit.repeat[index - 1];
+    } else {
+      return 7 - habit.repeat[habit.repeat.length - 1];
+    }
+  };
+
   const subtractDay = (date: Date) => {
-    return moment(date).subtract(1, "day").toDate();
+    return moment(date).subtract(getSubtractValue(), "day").toDate();
   };
 
   const findIndexOfHistory = (date: Date) =>

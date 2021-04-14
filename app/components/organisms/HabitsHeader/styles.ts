@@ -36,5 +36,5 @@ export const StyledDot = styled.View<DotProps>`
   width: 6px;
   height: 6px;
   background-color: ${({ theme, color }) =>
-    color !== "none" && theme.colors[color][500]};
+    color === "none" ? "transparent" : theme.colors[color][500]};
 `;

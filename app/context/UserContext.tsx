@@ -27,8 +27,6 @@ const UserProvider: FunctionComponent = ({ children }) => {
     let userString: string | null = await SecureStore.getItemAsync("user");
     let user: null | User;
 
-    // console.log("userString", userString == null || userString == "null");
-
     if (!userString || userString == "null") {
       user = createLocalUser();
       await SecureStore.setItemAsync("user", JSON.stringify(user));

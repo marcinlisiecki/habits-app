@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 
-import { getDaysInMonth } from "@app/utils/date";
 import useUser from "@app/hooks/useUser";
 
 import MainTemplate from "@app/templates/MainTemplate";
@@ -9,7 +8,6 @@ import HabitsHeader from "@app/components/organisms/HabitsHeader";
 import HabitsList from "@app/components/organisms/HabitsList";
 
 import DateTimePicker from "react-native-modal-datetime-picker";
-import moment from "moment";
 import { Text } from "react-native";
 import {
   mutateHeaderDays,
