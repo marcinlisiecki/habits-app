@@ -8,7 +8,7 @@ export default function App() {
   return (
     <Providers>
       <StatusBar
-        backgroundColor={"#0B0E11"}
+        backgroundColor={"transparent"}
         barStyle={"light-content"}
         hidden={false}
         translucent={true}

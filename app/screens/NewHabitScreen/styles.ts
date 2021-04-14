@@ -1,8 +1,11 @@
-import styled from 'styled-components/native';
+import styled from "styled-components/native";
+import { StatusBar } from "react-native";
+import { Platform } from "react-native";
 
 export const StyledHeader = styled.SafeAreaView`
   width: 100%;
   background-color: ${({ theme }) => theme.colors.background.secondary};
+  padding-top: ${Platform.OS == "android" ? StatusBar.currentHeight : 0}px;
 
   border-bottom-width: 1px;
   border-bottom-color: ${({ theme }) => theme.colors.borderColors.primary};
@@ -52,7 +55,8 @@ export const StyledSelectRepeatBottom = styled.TouchableOpacity<SelectRepeatBott
   border-top-width: 1px;
   border-top-color: ${({ theme }) => theme.colors.borderColors.primary};
 
-  background-color: ${({ theme, isSelected = false }) => (isSelected ? theme.colors.primary[500] : 'transparent')};
+  background-color: ${({ theme, isSelected = false }) =>
+    isSelected ? theme.colors.primary[500] : "transparent"};
 `;
 
 interface SelectRepeatDayProps {
@@ -74,8 +78,11 @@ export const StyledSelectRepeatDay = styled.TouchableOpacity<SelectRepeatDayProp
   border-right-width: 1px;
   border-right-color: ${({ theme }) => theme.colors.borderColors.primary};
 
-  border-top-left-radius: ${({ roundLeft = false }) => (roundLeft ? '10px' : '0px')};
-  border-top-right-radius: ${({ roundRight = false }) => (roundRight ? '10px' : '0px')};
+  border-top-left-radius: ${({ roundLeft = false }) =>
+    roundLeft ? "10px" : "0px"};
+  border-top-right-radius: ${({ roundRight = false }) =>
+    roundRight ? "10px" : "0px"};
 
-  background-color: ${({ theme, isSelected = false }) => (isSelected ? theme.colors.primary[500] : 'transparent')};
+  background-color: ${({ theme, isSelected = false }) =>
+    isSelected ? theme.colors.primary[500] : "transparent"};
 `;

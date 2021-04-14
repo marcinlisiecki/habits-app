@@ -1,9 +1,9 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent } from "react";
 
-import Input from '@app/components/atoms/Input';
-import Label from '@app/components/atoms/Label';
+import Input from "@app/components/atoms/Input";
+import Label from "@app/components/atoms/Label";
 
-import { StyledWrapper } from './styles';
+import { StyledWrapper } from "./styles";
 
 interface Props {
   label?: string;
@@ -15,10 +15,14 @@ interface Props {
   [key: string]: any;
 }
 
-const FormField: FunctionComponent<Props> = ({ label = '', margin = '0', ...props }) => {
+const FormField: FunctionComponent<Props> = ({
+  label = "",
+  margin = "0",
+  ...props
+}) => {
   return (
-    <StyledWrapper margin={margin}>
-      <Label margin={'0px 0px 4px 0px'}>{label}</Label>
+    <StyledWrapper /* margin={margin} */>
+      <Label margin={"0px 0px 4px 0px"}>{label}</Label>
       <Input {...props} />
     </StyledWrapper>
   );

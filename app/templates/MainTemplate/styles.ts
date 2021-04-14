@@ -1,4 +1,4 @@
-import styled from 'styled-components/native';
+import styled from "styled-components/native";
 
 export const StyledWrapper = styled.SafeAreaView`
   background-color: ${({ theme }) => theme.colors.background.primary};
@@ -8,7 +8,7 @@ export const StyledWrapper = styled.SafeAreaView`
 `;
 
 export const StyledContent = styled.View`
-  padding: 20px;
+  padding: 20px 10px;
   width: 100%;
 
   display: flex;

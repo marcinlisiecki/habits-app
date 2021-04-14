@@ -11,9 +11,12 @@ export const StyledWrapper = styled.TouchableOpacity<WrapperProps>`
   margin-bottom: 10px;
   border-width: 1px;
   border-radius: 10px;
-  border-color: ${({ theme }) => theme.colors.borderColors.primary};
+  border-top-color: ${({ theme }) => theme.colors.borderColors.primary};
+  border-right-color: ${({ theme }) => theme.colors.borderColors.primary};
+  border-bottom-color: ${({ theme }) => theme.colors.borderColors.primary};
 
   border-left-width: 8px;
+
   border-left-color: ${({ theme, status }) =>
     status === "done"
       ? theme.colors.success[500]

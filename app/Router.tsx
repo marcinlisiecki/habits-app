@@ -1,8 +1,9 @@
 import "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { FunctionComponent, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { Text } from "react-native";
+import { Platform, SafeAreaView, StatusBar, Text, View } from "react-native";
 
 const { Screen, Navigator } = createStackNavigator();
 
@@ -24,8 +25,13 @@ const Router: FunctionComponent = () => {
   if (!fontsLoaded || !isUserLoaded || !user) return <Text>Loading...</Text>;
 
   return (
-    <NavigationContainer>
-      <Navigator screenOptions={{ headerShown: false }}>
+    <NavigationContainer theme={{ colors: { background: "#0B0E11" } }}>
+      <Navigator
+        screenOptions={{
+          headerShown: false,
+          cardStyle: { opacity: 1, margin: 0, padding: 0 },
+        }}
+      >
         <Screen name={"HabitsScreen"} component={HabitsScreen} />
         <Screen name={"NewHabitScreen"} component={NewHabitScreen} />
       </Navigator>

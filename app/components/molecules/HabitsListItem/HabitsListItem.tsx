@@ -12,12 +12,11 @@ interface Props {
   date: Date;
 }
 
-const calculateStreak = (habit: Habit) => {
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
+const calculateStreak = (habit: Habit, date: Date) => {
+  date.setUTCHours(0, 0, 0, 0);
 
   let streak = 0;
-  let currentDate = today;
+  let currentDate = date;
 
   const subtractDay = (date: Date) => {
     return moment(date).subtract(1, "day").toDate();
@@ -51,7 +50,7 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
   const { user, updateUser } = useUser();
 
   const { name } = habit;
-  const streak = calculateStreak(habit);
+  const streak = calculateStreak(habit, date);
 
   const status: string =
     habit?.history?.find((item) => item?.date == date.toISOString())?.status ||
