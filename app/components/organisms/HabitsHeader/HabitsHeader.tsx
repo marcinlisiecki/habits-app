@@ -51,7 +51,7 @@ const HabitsHeader: FunctionComponent<Props> = forwardRef(
 
           <FlatList
             showsHorizontalScrollIndicator={false}
-            initialScrollIndex={selectedDate.getUTCDate() - 1}
+            initialScrollIndex={selectedDate.getDate() - 1}
             onScrollToIndexFailed={() => {}}
             ref={ref}
             contentContainerStyle={{}}
@@ -69,7 +69,7 @@ const HabitsHeader: FunctionComponent<Props> = forwardRef(
                 <StyledCalendarItem key={day} onPress={() => selectDay(index)}>
                   <Typography
                     color={
-                      selectedDate.getUTCDate() - 1 == index
+                      selectedDate.getDate() - 1 == index
                         ? "primary"
                         : "secondary"
                     }
@@ -80,7 +80,7 @@ const HabitsHeader: FunctionComponent<Props> = forwardRef(
                   <Typography
                     size={"h4"}
                     color={
-                      selectedDate.getUTCDate() - 1 == index
+                      selectedDate.getDate() - 1 == index
                         ? "primary"
                         : "secondary"
                     }

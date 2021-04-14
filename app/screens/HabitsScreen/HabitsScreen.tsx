@@ -7,11 +7,8 @@ import MainTemplate from "@app/templates/MainTemplate";
 import Typography from "@app/components/atoms/Typography";
 import HabitsHeader from "@app/components/organisms/HabitsHeader";
 import HabitsList from "@app/components/organisms/HabitsList";
-import { View } from "react-native";
-import DateTimePicker, {
-  DateTimePickerProps,
-} from "react-native-modal-datetime-picker";
-import { StyledContent } from "@app/components/organisms/HabitsHeader/styles";
+
+import DateTimePicker from "react-native-modal-datetime-picker";
 
 const HabitsScreen: FunctionComponent = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
@@ -21,43 +18,37 @@ const HabitsScreen: FunctionComponent = () => {
 
   const getInitialDate = (): Date => {
     const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-    today.setUTCDate(today.getUTCDate());
+    today.setHours(0, 0, 0, 0);
+
     return today;
   };
 
   const [selectedDate, setSelectedDate] = useState<Date>(getInitialDate());
   const days = getDaysInMonth(
-    selectedDate.getUTCMonth(),
-    selectedDate.getUTCFullYear()
+    selectedDate.getMonth(),
+    selectedDate.getFullYear()
   );
 
   const [habits, setHabits] = useState<Habit[]>(user?.habits || []);
 
   const selectDay = (index: number): void => {
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-    today.setUTCDate(index + 1);
+    const day = new Date(selectedDate);
+    day.setDate(index + 1);
 
-    setSelectedDate(today);
+    setSelectedDate(day);
   };
 
   useEffect(() => {
     if (listRef.current)
       listRef.current.scrollToIndex({
-        index: Math.max(0, selectedDate.getUTCDate() - 1),
+        index: Math.max(0, selectedDate.getDate() - 1),
         animated: true,
         viewPosition: 0.5,
       });
   }, [selectedDate]);
 
   useEffect(() => {
-    const today = new Date();
-    const dayOfWeek = new Date(
-      today.getUTCFullYear(),
-      today.getUTCMonth(),
-      selectedDate.getUTCDate()
-    ).getDay();
+    const dayOfWeek = new Date().getDay();
 
     setHabits([
       ...(user?.habits.filter((habit: Habit) =>
@@ -69,7 +60,8 @@ const HabitsScreen: FunctionComponent = () => {
   const openDatePicker = () => setShowDatePicker(true);
 
   const handlePickDate = (date: Date) => {
-    date.setUTCHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+
     setSelectedDate(date);
     setShowDatePicker(false);
   };
@@ -88,6 +80,7 @@ const HabitsScreen: FunctionComponent = () => {
         onCancel={() => setShowDatePicker(false)}
         onConfirm={handlePickDate}
         isDarkModeEnabled={false}
+        timeZoneOffsetInMinutes={new Date().getTimezoneOffset()}
       />
       <MainTemplate>
         <Typography size={"h4"} weight={600} margin={"40px 0 0 0"}>

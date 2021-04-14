@@ -13,7 +13,7 @@ interface Props {
 }
 
 const calculateStreak = (habit: Habit, date: Date) => {
-  date.setUTCHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
 
   let streak = 0;
   let currentDate = date;
@@ -24,7 +24,7 @@ const calculateStreak = (habit: Habit, date: Date) => {
 
   const findIndexOfHistory = (date: Date) =>
     habit.history.findIndex((item) =>
-      moment(item.date).isSame(date.toISOString())
+      moment(item.date).isSame(date.toISOString(), "day")
     );
 
   if (
@@ -53,8 +53,9 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
   const streak = calculateStreak(habit, date);
 
   const status: string =
-    habit?.history?.find((item) => item?.date == date.toISOString())?.status ||
-    "undone";
+    habit?.history?.find((item) =>
+      moment(item?.date).isSame(date.toISOString(), "day")
+    )?.status || "undone";
 
   const handleClick = async () => {
     if (!user) return;
