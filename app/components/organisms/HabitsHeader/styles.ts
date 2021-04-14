@@ -25,3 +25,16 @@ export const StyledBar = styled.View`
 export const StyledCalendarItem = styled.TouchableOpacity`
   margin: 0 20px;
 `;
+
+interface DotProps {
+  color: "danger" | "success" | "none" | "warning";
+}
+
+export const StyledDot = styled.View<DotProps>`
+  margin: 8px auto 0 auto;
+  border-radius: 100000px;
+  width: 6px;
+  height: 6px;
+  background-color: ${({ theme, color }) =>
+    color !== "none" && theme.colors[color][500]};
+`;

@@ -8,7 +8,7 @@ import Typography from "@app/components/atoms/Typography";
 
 interface Props {
   selectedDate: Date;
-  days: Date[];
+  days: HeaderDays[];
   selectDay: (index: number) => void;
   openDatePicker: () => void;
   ref: any;
@@ -19,6 +19,7 @@ import {
   StyledContent,
   StyledCalendarItem,
   StyledBar,
+  StyledDot,
 } from "./styles";
 import { StackNavigationProp } from "@react-navigation/stack";
 
@@ -62,8 +63,8 @@ const HabitsHeader: FunctionComponent<Props> = forwardRef(
             }
             data={days}
             renderItem={({ item, index }) => {
-              const day = item.getDate();
-              const name = weekdays[item.getDay()];
+              const day = item.date.getDate();
+              const name = weekdays[item.date.getDay()];
 
               return (
                 <StyledCalendarItem key={day} onPress={() => selectDay(index)}>
@@ -88,6 +89,7 @@ const HabitsHeader: FunctionComponent<Props> = forwardRef(
                   >
                     {day}
                   </Typography>
+                  <StyledDot color={item.color} />
                 </StyledCalendarItem>
               );
             }}

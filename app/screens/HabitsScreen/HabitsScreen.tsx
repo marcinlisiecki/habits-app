@@ -9,26 +9,22 @@ import HabitsHeader from "@app/components/organisms/HabitsHeader";
 import HabitsList from "@app/components/organisms/HabitsList";
 
 import DateTimePicker from "react-native-modal-datetime-picker";
+import moment from "moment";
+import { Text } from "react-native";
+import {
+  mutateHeaderDays,
+  scrollToIndex,
+  getInitialDate,
+  filterHabitsByRepeat,
+} from "./utils";
 
 const HabitsScreen: FunctionComponent = () => {
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
-
   const { user } = useUser();
   const listRef: any = useRef();
 
-  const getInitialDate = (): Date => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return today;
-  };
-
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [days, setDays] = useState<HeaderDays[] | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(getInitialDate());
-  const days = getDaysInMonth(
-    selectedDate.getMonth(),
-    selectedDate.getFullYear()
-  );
-
   const [habits, setHabits] = useState<Habit[]>(user?.habits || []);
 
   const selectDay = (index: number): void => {
@@ -39,22 +35,18 @@ const HabitsScreen: FunctionComponent = () => {
   };
 
   useEffect(() => {
-    if (listRef.current)
-      listRef.current.scrollToIndex({
-        index: Math.max(0, selectedDate.getDate() - 1),
-        animated: true,
-        viewPosition: 0.5,
-      });
-  }, [selectedDate]);
+    scrollToIndex(listRef, selectedDate);
+  }, [selectedDate, listRef]);
 
   useEffect(() => {
-    const dayOfWeek = new Date().getDay();
+    if (!user) return;
+    setHabits(filterHabitsByRepeat(user.habits, selectedDate));
+  }, [selectedDate, user]);
 
-    setHabits([
-      ...(user?.habits.filter((habit: Habit) =>
-        habit.repeat.includes(dayOfWeek)
-      ) || []),
-    ]);
+  useEffect(() => {
+    if (!user) return;
+    const newDays: HeaderDays[] = mutateHeaderDays(user.habits, selectedDate);
+    setDays(newDays);
   }, [user]);
 
   const openDatePicker = () => setShowDatePicker(true);
@@ -65,6 +57,8 @@ const HabitsScreen: FunctionComponent = () => {
     setSelectedDate(date);
     setShowDatePicker(false);
   };
+
+  if (!days) return <Text>loading...</Text>;
 
   return (
     <>
@@ -80,7 +74,7 @@ const HabitsScreen: FunctionComponent = () => {
         onCancel={() => setShowDatePicker(false)}
         onConfirm={handlePickDate}
         isDarkModeEnabled={false}
-        timeZoneOffsetInMinutes={new Date().getTimezoneOffset()}
+        timeZoneOffsetInMinutes={-new Date().getTimezoneOffset()}
       />
       <MainTemplate>
         <Typography size={"h4"} weight={600} margin={"40px 0 0 0"}>
