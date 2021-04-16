@@ -32,6 +32,7 @@ const NewHabitScreen: FunctionComponent = () => {
   const { updateUser, user } = useUser();
 
   const [name, setName] = useState<string>("");
+  const [emergency, setEmergency] = useState<string>("");
   const [repeat, setRepeat] = useState<number[]>([]);
   const [error, setError] = useState<ValidationError | null>(null);
 
@@ -65,6 +66,14 @@ const NewHabitScreen: FunctionComponent = () => {
       return;
     }
 
+    if (emergency.length <= 0) {
+      setError({
+        path: "emergency",
+        message: "Emergency goal is required",
+      });
+      return;
+    }
+
     if (repeat.length <= 0) {
       setError({
         path: "repeat",
@@ -73,7 +82,13 @@ const NewHabitScreen: FunctionComponent = () => {
       return;
     }
 
-    const newHabit = { _id: generateUUID(), name, repeat, history: [] };
+    const newHabit = {
+      _id: generateUUID(),
+      name,
+      repeat,
+      history: [],
+      emergency,
+    };
     updateUser(createNewHabit(user, newHabit));
 
     navigation.goBack();
@@ -100,11 +115,23 @@ const NewHabitScreen: FunctionComponent = () => {
       <MainTemplate>
         <FormField
           label={"Name"}
-          margin={"20px 0 0 0"}
+          marginTop={"20px"}
           value={name}
           onChange={(text) => setName(text)}
         />
         {error?.path === "name" && (
+          <Typography color={"error"} margin={"4px 0 0 0"}>
+            {error.message}
+          </Typography>
+        )}
+
+        <FormField
+          label={"Emergency goal"}
+          marginTop={"20px"}
+          value={emergency}
+          onChange={(text) => setEmergency(text)}
+        />
+        {error?.path === "emergency" && (
           <Typography color={"error"} margin={"4px 0 0 0"}>
             {error.message}
           </Typography>

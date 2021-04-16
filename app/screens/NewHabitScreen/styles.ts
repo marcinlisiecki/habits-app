@@ -76,7 +76,8 @@ export const StyledSelectRepeatDay = styled.TouchableOpacity<SelectRepeatDayProp
   font-family: ${({ theme }) => theme.typography.fontFamily.Montserrat[700]};
 
   border-right-width: 1px;
-  border-right-color: ${({ theme }) => theme.colors.borderColors.primary};
+  border-right-color: ${({ theme, isSelected = false }) =>
+    isSelected ? "transparent" : theme.colors.borderColors.primary};
 
   border-top-left-radius: ${({ roundLeft = false }) =>
     roundLeft ? "10px" : "0px"};

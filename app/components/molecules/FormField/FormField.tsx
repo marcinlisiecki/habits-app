@@ -10,18 +10,19 @@ interface Props {
   placeholder?: string;
   value?: string;
   type?: string;
-  margin?: string;
+  marginTop?: string;
   onChange?: (text: string) => void;
+
   [key: string]: any;
 }
 
 const FormField: FunctionComponent<Props> = ({
   label = "",
-  margin = "0",
+  marginTop = "0",
   ...props
 }) => {
   return (
-    <StyledWrapper /* margin={margin} */>
+    <StyledWrapper marginTop={marginTop}>
       <Label margin={"0px 0px 4px 0px"}>{label}</Label>
       <Input {...props} />
     </StyledWrapper>

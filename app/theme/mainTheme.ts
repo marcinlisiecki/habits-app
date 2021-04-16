@@ -62,8 +62,8 @@ const colors = {
     primary: "#fff",
     secondary: "#aeaeae",
     error: "#E64C4C",
-
-    // had no idea how to name it :)
+    success: "#40D68D",
+    warning: "#FAFF5C",
     special: "#40D68D",
   },
   background: {

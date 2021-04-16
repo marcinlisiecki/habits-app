@@ -7,7 +7,7 @@ interface WrapperProps {
 export const StyledWrapper = styled.TouchableOpacity<WrapperProps>`
   background-color: ${({ theme }) => theme.colors.background.secondary};
   min-width: 100%;
-  padding: 16px 16px 16px 24px;
+  padding: 12px 12px 12px 16px;
   margin-bottom: 10px;
   border-width: 1px;
   border-radius: 10px;
@@ -15,12 +15,12 @@ export const StyledWrapper = styled.TouchableOpacity<WrapperProps>`
   border-right-color: ${({ theme }) => theme.colors.borderColors.primary};
   border-bottom-color: ${({ theme }) => theme.colors.borderColors.primary};
 
-  border-left-width: 8px;
+  border-left-width: 6px;
 
   border-left-color: ${({ theme, status }) =>
     status === "done"
       ? theme.colors.success[500]
       : status == "emergency"
       ? theme.colors.warning[500]
-      : theme.colors.gray[300]};
+      : theme.colors.gray[400]};
 `;

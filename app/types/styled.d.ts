@@ -54,6 +54,8 @@ declare module "styled-components" {
         primary: string;
         secondary: string;
         error: string;
+        warning: string;
+        success: string;
         special: string;
       };
       base: {

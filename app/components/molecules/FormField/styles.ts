@@ -1,10 +1,10 @@
-import styled from 'styled-components/native';
+import styled from "styled-components/native";
 
 interface WrapperProps {
-  margin?: string;
+  marginTop?: string;
 }
 
 export const StyledWrapper = styled.View<WrapperProps>`
-  margin: ${({ margin = '0' }) => margin};
+  margin-top: ${({ marginTop = "0" }) => marginTop};
   width: 100%;
 `;

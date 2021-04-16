@@ -5,6 +5,7 @@ export const StyledWrapper = styled.SafeAreaView`
   height: 100%;
   width: 100%;
   padding: 12px;
+  flex: 1;
 `;
 
 export const StyledContent = styled.View`
@@ -14,4 +15,6 @@ export const StyledContent = styled.View`
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+
+  flex: 1;
 `;

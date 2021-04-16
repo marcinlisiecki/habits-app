@@ -1,7 +1,7 @@
 import React, { FunctionComponent, forwardRef, Ref, useState } from "react";
 
 import { FlatList } from "react-native";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons, Feather, Entypo, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import Typography from "@app/components/atoms/Typography";
@@ -33,10 +33,10 @@ const HabitsHeader: FunctionComponent<Props> = forwardRef(
       <StyledWrapper>
         <StyledContent>
           <StyledBar>
-            <Feather
-              name={"menu"}
+            <AntDesign
+              name={"calendar"}
               color={"#fff"}
-              size={32}
+              size={26}
               onPress={openDatePicker}
             />
 

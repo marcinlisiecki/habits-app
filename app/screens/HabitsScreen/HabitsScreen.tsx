@@ -8,7 +8,7 @@ import HabitsHeader from "@app/components/organisms/HabitsHeader";
 import HabitsList from "@app/components/organisms/HabitsList";
 
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import {
   mutateHeaderDays,
   scrollToIndex,
@@ -45,7 +45,7 @@ const HabitsScreen: FunctionComponent = () => {
     if (!user) return;
     const newDays: HeaderDays[] = mutateHeaderDays(user.habits, selectedDate);
     setDays(newDays);
-  }, [user]);
+  }, [user, selectedDate]);
 
   const openDatePicker = () => setShowDatePicker(true);
 
@@ -59,7 +59,7 @@ const HabitsScreen: FunctionComponent = () => {
   if (!days) return <Text>loading...</Text>;
 
   return (
-    <>
+    <View style={{ flex: 1, flexGrow: 1 }}>
       <HabitsHeader
         days={days}
         selectDay={selectDay}
@@ -83,7 +83,7 @@ const HabitsScreen: FunctionComponent = () => {
           <HabitsList habits={habits} selectedDate={selectedDate} />
         )}
       </MainTemplate>
-    </>
+    </View>
   );
 };
 

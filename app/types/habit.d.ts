@@ -1,6 +1,7 @@
 interface Habit {
   _id: string;
   name: string;
+  emergency: string;
   status?: string;
   repeat: number[];
   history: HabitHistory[];
