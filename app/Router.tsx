@@ -13,6 +13,7 @@ import useUser from "@app/hooks/useUser";
 
 import HabitsScreen from "@app/screens/HabitsScreen";
 import NewHabitScreen from "@app/screens/NewHabitScreen";
+import UpdateHabitScreen from "@app/screens/UpdateHabitScreen";
 
 const Router: FunctionComponent = () => {
   const [fontsLoaded] = useLoadFonts();
@@ -34,6 +35,7 @@ const Router: FunctionComponent = () => {
       >
         <Screen name={"HabitsScreen"} component={HabitsScreen} />
         <Screen name={"NewHabitScreen"} component={NewHabitScreen} />
+        <Screen name={"UpdateHabitScreen"} component={UpdateHabitScreen} />
       </Navigator>
     </NavigationContainer>
   );

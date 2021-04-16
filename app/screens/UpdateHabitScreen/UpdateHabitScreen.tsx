@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -7,13 +7,19 @@ import Typography from "@app/components/atoms/Typography";
 
 import { StyledHeader, StyledHeaderContent } from "./styles";
 
-import { useNavigation } from "@react-navigation/native";
+import { Route, RouteProp, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import HabitForm from "@app/components/organisms/HabitForm";
 
-const NewHabitScreen: FunctionComponent = () => {
+interface Props {
+  route?: RouteProp<StackParams, "UpdateHabitScreen">;
+}
+
+const UpdateHabitScreen: FunctionComponent<Props> = ({ route }) => {
   const navigation = useNavigation<StackNavigationProp<StackParams>>();
+
+  const initialHabit: Habit | undefined = route?.params.habit;
 
   return (
     <>
@@ -34,10 +40,10 @@ const NewHabitScreen: FunctionComponent = () => {
         </StyledHeaderContent>
       </StyledHeader>
       <MainTemplate>
-        <HabitForm />
+        <HabitForm createNew={false} initialHabit={initialHabit} />
       </MainTemplate>
     </>
   );
 };
 
-export default NewHabitScreen;
+export default UpdateHabitScreen;

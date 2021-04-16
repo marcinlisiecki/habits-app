@@ -7,6 +7,9 @@ import { changeHabitStatus } from "@app/mutations/habit";
 
 import { StyledWrapper } from "./styles";
 import { calculateStreak } from "./utils";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import HabitForm from "@app/components/organisms/HabitForm";
 
 interface Props {
   habit: Habit;
@@ -14,6 +17,7 @@ interface Props {
 }
 
 const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
+  const navigation = useNavigation<StackNavigationProp<StackParams>>();
   const { user, updateUser } = useUser();
 
   const { name, emergency } = habit;
@@ -29,8 +33,16 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
     await updateUser(changeHabitStatus({ user, habit, date }));
   };
 
+  const handleLongPress = () => {
+    navigation.navigate("UpdateHabitScreen", { habit });
+  };
+
   return (
-    <StyledWrapper onPress={handleClick} status={status}>
+    <StyledWrapper
+      onPress={handleClick}
+      onLongPress={handleLongPress}
+      status={status}
+    >
       <Typography size={"h5"} weight={600} color={"primary"}>
         {name}
       </Typography>

@@ -5,6 +5,18 @@ export const createNewHabit = (user: User, habit: Habit): User => ({
   habits: [...user.habits, habit],
 });
 
+export const updateHabit = (user: User, habit: Habit): User => {
+  const newUser = { ...user };
+  const index = newUser.habits.findIndex((item) => item._id == habit._id);
+  newUser.habits[index].repeat = habit.repeat;
+
+  newUser.habits[index].name = habit.name;
+  newUser.habits[index].name = habit.name;
+  newUser.habits[index].emergency = habit.emergency;
+
+  return newUser;
+};
+
 interface ChangeHabitStateProps {
   user: User;
   date: Date;
