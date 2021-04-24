@@ -20,7 +20,7 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
   const navigation = useNavigation<StackNavigationProp<StackParams>>();
   const { user, updateUser } = useUser();
 
-  const { name, emergency } = habit;
+  const { name, backup } = habit;
   const streak = calculateStreak(habit, date);
 
   const status: string =
@@ -46,9 +46,11 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
       <Typography size={"h5"} weight={600} color={"primary"}>
         {name}
       </Typography>
-      <Typography size={"p"} weight={500} color={"secondary"}>
-        {emergency}
-      </Typography>
+      {backup && (
+        <Typography size={"p"} weight={500} color={"secondary"}>
+          {backup}
+        </Typography>
+      )}
       <Typography
         margin={"10px 0 0 0"}
         color={streak > 0 ? "special" : "secondary"}

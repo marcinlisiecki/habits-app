@@ -31,9 +31,7 @@ const HabitForm: FunctionComponent<Props> = ({
   const { updateUser, user } = useUser();
 
   const [name, setName] = useState<string>(initialHabit?.name || "");
-  const [emergency, setEmergency] = useState<string>(
-    initialHabit?.emergency || ""
-  );
+  const [backup, setBackup] = useState<string>(initialHabit?.backup || "");
   const [repeat, setRepeat] = useState<number[]>(initialHabit?.repeat || []);
   const [error, setError] = useState<ValidationError | null>(null);
 
@@ -65,13 +63,13 @@ const HabitForm: FunctionComponent<Props> = ({
       return;
     }
 
-    if (emergency.length <= 0) {
-      setError({
-        path: "emergency",
-        message: "Emergency goal is required",
-      });
-      return;
-    }
+    // if (backup.length <= 0) {
+    //   setError({
+    //     path: "backup",
+    //     message: "Backup goal is required",
+    //   });
+    //   return;
+    // }
 
     if (repeat.length <= 0) {
       setError({
@@ -83,13 +81,14 @@ const HabitForm: FunctionComponent<Props> = ({
 
     if (!createNew && !initialHabit) return;
 
-    const newHabit = {
+    let newHabit: Habit = {
       _id: createNew ? generateUUID() : initialHabit?._id || generateUUID(),
       history: createNew ? [] : initialHabit?.history || [],
       name,
       repeat,
-      emergency,
     };
+
+    if (backup.length > 0) newHabit = { ...newHabit, backup };
 
     if (createNew) updateUser(createNewHabit(user, newHabit));
     else updateUser(updateHabit(user, newHabit));
@@ -108,12 +107,12 @@ const HabitForm: FunctionComponent<Props> = ({
       {createError(error, "name")}
 
       <FormField
-        label={"Emergency goal"}
+        label={"Backup goal"}
         marginTop={"20px"}
-        value={emergency}
-        onChange={(text) => setEmergency(text)}
+        value={backup}
+        onChange={(text) => setBackup(text)}
       />
-      {createError(error, "emergency")}
+      {createError(error, "backup")}
 
       <Label margin={"20px 0 4px 0"}>When you want to repeat the habit?</Label>
       <SelectRepeat

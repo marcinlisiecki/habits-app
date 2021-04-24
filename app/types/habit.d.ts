@@ -1,7 +1,7 @@
 interface Habit {
   _id: string;
   name: string;
-  emergency: string;
+  backup?: string | null;
   status?: string;
   repeat: number[];
   history: HabitHistory[];

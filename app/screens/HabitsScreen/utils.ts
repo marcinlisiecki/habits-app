@@ -15,7 +15,7 @@ export const mutateHeaderDays = (habits: Habit[], selectedDate: Date) => {
       if (habit.repeat.includes(dayOfWeek)) {
         count++;
         const isDone: boolean =
-          ["done", "emergency"].includes(
+          ["done", "backup"].includes(
             habit?.history?.find((item) =>
               moment(item?.date).isSame(day.toISOString(), "day")
             )?.status || ""

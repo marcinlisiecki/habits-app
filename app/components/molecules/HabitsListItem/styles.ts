@@ -20,7 +20,7 @@ export const StyledWrapper = styled.TouchableOpacity<WrapperProps>`
   border-left-color: ${({ theme, status }) =>
     status === "done"
       ? theme.colors.success[500]
-      : status == "emergency"
+      : status == "backup"
       ? theme.colors.warning[500]
       : theme.colors.gray[400]};
 `;

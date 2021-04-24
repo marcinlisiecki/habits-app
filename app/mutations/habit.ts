@@ -12,7 +12,7 @@ export const updateHabit = (user: User, habit: Habit): User => {
 
   newUser.habits[index].name = habit.name;
   newUser.habits[index].name = habit.name;
-  newUser.habits[index].emergency = habit.emergency;
+  newUser.habits[index].backup = habit.backup;
 
   return newUser;
 };
@@ -38,8 +38,10 @@ export const changeHabitStatus = ({
     const history = habit.history[index];
 
     if (history.status == "undone") history.status = "done";
-    else if (history.status == "done") history.status = "emergency";
-    else if (history.status == "emergency") history.status = "undone";
+    else if (history.status == "done") {
+      if (habit.backup) history.status = "backup";
+      else history.status = "undone";
+    } else if (history.status == "backup") history.status = "undone";
   }
 
   const habitIndex = user.habits.findIndex((item) => item._id == habit._id);

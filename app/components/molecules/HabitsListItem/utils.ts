@@ -6,9 +6,6 @@ export const calculateStreak = (habit: Habit, date: Date) => {
   let streak = 0;
   let currentDate = date;
 
-  let doneToday = false;
-  let doneLastTime = false;
-
   const getSubtractionValue = () => {
     habit.repeat.sort((a, b) => a - b);
 
