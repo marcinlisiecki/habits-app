@@ -49,3 +49,10 @@ export const changeHabitStatus = ({
 
   return user;
 };
+
+export const deleteHabit = (user: User, id: string) => {
+  const newUser: User = { ...user };
+
+  newUser.habits = newUser.habits.filter((habit: Habit) => habit._id !== id);
+  return newUser;
+};
