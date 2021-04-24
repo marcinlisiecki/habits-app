@@ -4,8 +4,10 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import * as SecureStore from "expo-secure-store";
+
 import { createLocalUser } from "@app/utils/userUtils";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface ContextState {
   user: User | null;
@@ -24,15 +26,12 @@ const UserProvider: FunctionComponent = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   const initialLoad = async () => {
-    let userString: string | null = await SecureStore.getItemAsync("user");
+    let userString: string | null = await AsyncStorage.getItem("user");
     let user: null | User;
-
-    // @ts-ignore
-    // await SecureStore.setItemAsync("user", null);
 
     if (!userString || userString == "null") {
       user = createLocalUser();
-      await SecureStore.setItemAsync("user", JSON.stringify(user));
+      await AsyncStorage.setItem("user", JSON.stringify(user));
     } else {
       user = JSON.parse(userString);
     }
@@ -46,7 +45,7 @@ const UserProvider: FunctionComponent = ({ children }) => {
   };
 
   const saveUser = async () => {
-    await SecureStore.setItemAsync("user", JSON.stringify(user));
+    await AsyncStorage.setItem("user", JSON.stringify(user));
   };
 
   useEffect(() => {

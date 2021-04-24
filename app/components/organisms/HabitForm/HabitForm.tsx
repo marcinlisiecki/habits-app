@@ -107,14 +107,14 @@ const HabitForm: FunctionComponent<Props> = ({
       {createError(error, "name")}
 
       <FormField
-        label={"Backup goal"}
-        marginTop={"20px"}
+        label={"Backup goal (optional)"}
+        marginTop={"40px"}
         value={backup}
         onChange={(text) => setBackup(text)}
       />
       {createError(error, "backup")}
 
-      <Label margin={"20px 0 4px 0"}>When you want to repeat the habit?</Label>
+      <Label margin={"40px 0 4px 0"}>When you want to repeat the habit?</Label>
       <SelectRepeat
         isSelected={isSelected}
         handleSelectAll={handleSelectAll}
