@@ -35,16 +35,19 @@ const HabitsHeader: FunctionComponent<Props> = forwardRef(
           <StyledBar>
             <AntDesign
               name={"calendar"}
-              color={"#fff"}
+              color={"#aaa"}
               size={26}
+              style={{ marginRight: 10 }}
               onPress={openDatePicker}
             />
 
-            <Typography weight={600}>Habits</Typography>
+            <Typography weight={700} color={"special"} letterSpacing={"4px"}>
+              HABITS
+            </Typography>
 
             <Ionicons
-              name={"add"}
-              color={"#fff"}
+              name={"ios-add-outline"}
+              color={"#aaa"}
               size={32}
               onPress={() => navigation.navigate("NewHabitScreen")}
             />

@@ -12,7 +12,7 @@ import { Route, RouteProp, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import HabitForm from "@app/components/organisms/HabitForm";
-import { Alert } from "react-native";
+import { Alert, View } from "react-native";
 import useUser from "@app/hooks/useUser";
 import { deleteHabit } from "@app/mutations/habit";
 
@@ -62,7 +62,10 @@ const UpdateHabitScreen: FunctionComponent<Props> = ({ route }) => {
             color={"#fff"}
             onPress={() => navigation.goBack()}
           />
-          <Typography>New habit</Typography>
+          <Typography weight={700} color={"primary"} letterSpacing={"1px"}>
+            Update habit
+          </Typography>
+
           <MaterialIcons
             name={"delete-outline"}
             size={28}

@@ -17,7 +17,7 @@ const StyledInput = styled.TextInput<Props>`
   color: ${({ theme }) => theme.colors.text.primary};
   font-family: ${({ theme }) => theme.typography.fontFamily.Montserrat[500]};
   border-radius: 10px;
-  padding: ${Platform.OS === "ios" ? "10px 10px" : "6px 10px"};
+  padding: ${Platform.OS === "ios" ? "12px 10px" : "6px 10px"};
   width: 100%;
   margin: ${({ margin = "0" }) => margin};
 `;

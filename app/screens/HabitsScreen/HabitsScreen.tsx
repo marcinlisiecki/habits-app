@@ -75,10 +75,6 @@ const HabitsScreen: FunctionComponent = () => {
         timeZoneOffsetInMinutes={-new Date().getTimezoneOffset()}
       />
       <MainTemplate>
-        <Typography size={"h4"} weight={600} margin={"40px 0 0 0"}>
-          Your Progress
-        </Typography>
-
         {habits.length > 0 && (
           <HabitsList habits={habits} selectedDate={selectedDate} />
         )}
