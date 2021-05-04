@@ -1,13 +1,8 @@
-import React, {
-  FunctionComponent,
-  createContext,
-  useState,
-  useEffect,
-} from "react";
+import React, { FunctionComponent, createContext, useState, useEffect } from 'react';
 
-import { createLocalUser } from "@app/utils/userUtils";
+import { createLocalUser } from '@app/utils/userUtils';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface ContextState {
   user: User | null;
@@ -26,12 +21,12 @@ const UserProvider: FunctionComponent = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   const initialLoad = async () => {
-    let userString: string | null = await AsyncStorage.getItem("user");
+    let userString: string | null = await AsyncStorage.getItem('user');
     let user: null | User;
 
-    if (!userString || userString == "null") {
+    if (!userString || userString == 'null') {
       user = createLocalUser();
-      await AsyncStorage.setItem("user", JSON.stringify(user));
+      await AsyncStorage.setItem('user', JSON.stringify(user));
     } else {
       user = JSON.parse(userString);
     }
@@ -45,7 +40,7 @@ const UserProvider: FunctionComponent = ({ children }) => {
   };
 
   const saveUser = async () => {
-    await AsyncStorage.setItem("user", JSON.stringify(user));
+    await AsyncStorage.setItem('user', JSON.stringify(user));
   };
 
   useEffect(() => {

@@ -1,20 +1,16 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from "react";
+import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 
-import useUser from "@app/hooks/useUser";
+import useUser from '@app/hooks/useUser';
 
-import MainTemplate from "@app/templates/MainTemplate";
-import Typography from "@app/components/atoms/Typography";
-import HabitsHeader from "@app/components/organisms/HabitsHeader";
-import HabitsList from "@app/components/organisms/HabitsList";
+import MainTemplate from '@app/templates/MainTemplate';
+import HabitsHeader from '@app/components/organisms/HabitsHeader';
+import HabitsList from '@app/components/organisms/HabitsList';
 
-import DateTimePicker from "react-native-modal-datetime-picker";
-import { Text, View } from "react-native";
-import {
-  mutateHeaderDays,
-  scrollToIndex,
-  getInitialDate,
-  filterHabitsByRepeat,
-} from "./utils";
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import { Text, View } from 'react-native';
+import { scrollToIndex, getInitialDate, filterHabitsByRepeat } from './utils';
+import { mutateMonthByHabitStatus } from '@app/utils/calendar';
+import Typography from '@app/components/atoms/Typography';
 
 const HabitsScreen: FunctionComponent = () => {
   const { user } = useUser();
@@ -25,16 +21,9 @@ const HabitsScreen: FunctionComponent = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(getInitialDate());
   const [habits, setHabits] = useState<Habit[]>(user?.habits || []);
 
-  const selectDay = (index: number): void => {
-    const day = new Date(selectedDate);
-    day.setDate(index + 1);
-
-    setSelectedDate(day);
-  };
-
   useEffect(() => {
     scrollToIndex(listRef, selectedDate);
-  }, [selectedDate, listRef]);
+  }, [listRef]);
 
   useEffect(() => {
     if (!user) return;
@@ -43,20 +32,29 @@ const HabitsScreen: FunctionComponent = () => {
 
   useEffect(() => {
     if (!user) return;
-    const newDays: HeaderDays[] = mutateHeaderDays(user.habits, selectedDate);
+    const newDays: any[] = mutateMonthByHabitStatus(user.habits, selectedDate);
+
     setDays(newDays);
-  }, [user, selectedDate]);
+  }, [user]);
 
   const openDatePicker = () => setShowDatePicker(true);
 
-  const handlePickDate = (date: Date) => {
+  const selectDay = useCallback((index: number): void => {
+    const day = new Date(selectedDate);
+    day.setDate(index + 1);
+
+    setSelectedDate(day);
+    scrollToIndex(listRef, day);
+  }, []);
+
+  const handlePickDate = useCallback((date: Date) => {
     date.setHours(0, 0, 0, 0);
 
     setSelectedDate(date);
     setShowDatePicker(false);
-  };
+  }, []);
 
-  if (!days) return <Text>loading...</Text>;
+  if (!days) return <Typography>loading...</Typography>;
 
   return (
     <View style={{ flex: 1, flexGrow: 1 }}>
@@ -75,9 +73,7 @@ const HabitsScreen: FunctionComponent = () => {
         timeZoneOffsetInMinutes={-new Date().getTimezoneOffset()}
       />
       <MainTemplate>
-        {habits.length > 0 && (
-          <HabitsList habits={habits} selectedDate={selectedDate} />
-        )}
+        {habits.length > 0 && <HabitsList habits={habits} selectedDate={selectedDate} />}
       </MainTemplate>
     </View>
   );

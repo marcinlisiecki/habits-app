@@ -1,4 +1,4 @@
 interface HeaderDays {
   date: Date;
-  color: "danger" | "warning" | "success" | "none";
+  color: 'danger' | 'warning' | 'success' | 'none';
 }

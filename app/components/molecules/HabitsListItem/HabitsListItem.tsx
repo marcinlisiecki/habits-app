@@ -1,15 +1,13 @@
-import React, { FunctionComponent } from "react";
-import Typography from "@app/components/atoms/Typography";
-import moment from "moment";
+import React, { FunctionComponent } from 'react';
+import Typography from '@app/components/atoms/Typography';
 
-import useUser from "@app/hooks/useUser";
-import { changeHabitStatus } from "@app/mutations/habit";
+import useUser from '@app/hooks/useUser';
+import { changeHabitStatus } from '@app/mutations/habit';
+import { calculateStreak } from './utils';
 
-import { StyledWrapper } from "./styles";
-import { calculateStreak } from "./utils";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import HabitForm from "@app/components/organisms/HabitForm";
+import { StyledWrapper } from './styles';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 interface Props {
   habit: Habit;
@@ -22,11 +20,13 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
 
   const { name, backup } = habit;
   const streak = calculateStreak(habit, date);
+  // const streak = 1;
 
-  const status: string =
-    habit?.history?.find((item) =>
-      moment(item?.date).isSame(date.toISOString(), "day")
-    )?.status || "undone";
+  const status = habit.doneHistory.includes(date.toDateString())
+    ? 'done'
+    : habit.backupHistory.includes(date.toDateString())
+    ? 'backup'
+    : 'undone';
 
   const handleClick = async () => {
     if (!user) return;
@@ -34,28 +34,24 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
   };
 
   const handleLongPress = () => {
-    navigation.navigate("UpdateHabitScreen", { habit });
+    navigation.navigate('HabitStatsScreen', { habit });
   };
 
   return (
-    <StyledWrapper
-      onPress={handleClick}
-      onLongPress={handleLongPress}
-      status={status}
-    >
-      <Typography size={"h5"} weight={600} color={"primary"}>
+    <StyledWrapper onPress={handleClick} onLongPress={handleLongPress} status={status}>
+      <Typography size={'h5'} weight={600} color={'primary'}>
         {name}
       </Typography>
       {backup && (
-        <Typography size={"p"} weight={500} color={"secondary"}>
+        <Typography size={'p'} weight={500} color={'secondary'}>
           {backup}
         </Typography>
       )}
       <Typography
-        margin={"10px 0 0 0"}
-        color={streak > 0 ? "special" : "secondary"}
+        margin={'10px 0 0 0'}
+        color={streak > 0 ? 'special' : 'secondary'}
         weight={500}
-        letterSpacing={"1px"}
+        letterSpacing={'1px'}
       >
         {streak} days streak
       </Typography>

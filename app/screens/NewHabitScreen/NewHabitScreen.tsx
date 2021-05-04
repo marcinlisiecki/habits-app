@@ -22,7 +22,7 @@ const NewHabitScreen: FunctionComponent = () => {
           <MaterialCommunityIcons
             name={"keyboard-backspace"}
             size={32}
-            color={"#fff"}
+            color={"#aaa"}
             onPress={() => navigation.goBack()}
           />
           <Typography weight={700} color={"primary"} letterSpacing={"1px"}>

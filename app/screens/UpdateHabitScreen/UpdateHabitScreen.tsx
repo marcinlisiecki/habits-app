@@ -59,7 +59,7 @@ const UpdateHabitScreen: FunctionComponent<Props> = ({ route }) => {
           <MaterialCommunityIcons
             name={"keyboard-backspace"}
             size={32}
-            color={"#fff"}
+            color={"#aaa"}
             onPress={() => navigation.goBack()}
           />
           <Typography weight={700} color={"primary"} letterSpacing={"1px"}>
@@ -69,7 +69,7 @@ const UpdateHabitScreen: FunctionComponent<Props> = ({ route }) => {
           <MaterialIcons
             name={"delete-outline"}
             size={28}
-            color={"#fff"}
+            color={"#aaa"}
             onPress={handleDeleteAsk}
           />
         </StyledHeaderContent>

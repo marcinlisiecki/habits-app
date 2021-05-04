@@ -1,4 +1,4 @@
-import "styled-components";
+import 'styled-components';
 
 interface ColorPalette {
   100: string;
@@ -35,7 +35,7 @@ interface FontSize {
   fontSize: string;
 }
 
-declare module "styled-components" {
+declare module 'styled-components' {
   export interface DefaultTheme {
     colors: {
       borderColors: {
@@ -53,10 +53,12 @@ declare module "styled-components" {
       text: {
         primary: string;
         secondary: string;
+        tertiary: string;
         error: string;
         warning: string;
         success: string;
         special: string;
+        black: string;
       };
       base: {
         white: string;

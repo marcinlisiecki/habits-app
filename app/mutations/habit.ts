@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 
 export const createNewHabit = (user: User, habit: Habit): User => ({
   ...user,
@@ -23,29 +23,51 @@ interface ChangeHabitStateProps {
   habit: Habit;
 }
 
-export const changeHabitStatus = ({
-  user,
-  date,
-  habit,
-}: ChangeHabitStateProps): User => {
-  const index: number = habit.history.findIndex((item) =>
-    moment(item.date).isSame(date.toISOString(), "day")
-  );
+// export const changeHabitStatus = ({
+//   user,
+//   date,
+//   habit,
+// }: ChangeHabitStateProps): User => {
+//   const index: number = habit.history.findIndex((item) =>
+//     moment(item.date).isSame(date.toISOString(), "day")
+//   );
+//
+//   if (index === -1) {
+//     habit.history.push({ date: date.toISOString(), status: "done" });
+//   } else {
+//     const history = habit.history[index];
+//
+//     if (history.status == "undone") history.status = "done";
+//     else if (history.status == "done") {
+//       if (habit.backup) history.status = "backup";
+//       else history.status = "undone";
+//     } else if (history.status == "backup") history.status = "undone";
+//   }
+//
+//   const habitIndex = user.habits.findIndex((item) => item._id == habit._id);
+//   if (habitIndex !== -1) user.habits[habitIndex].history = [...habit.history];
+//
+//   return user;
+// };
 
-  if (index === -1) {
-    habit.history.push({ date: date.toISOString(), status: "done" });
+export const changeHabitStatus = ({ user, date, habit }: ChangeHabitStateProps) => {
+  const status = habit.doneHistory.includes(date.toDateString())
+    ? 'done'
+    : habit.backupHistory.includes(date.toDateString())
+    ? 'backup'
+    : 'undone';
+
+  if (status == 'done') {
+    habit.doneHistory = habit.doneHistory.filter((item) => item !== date.toDateString());
+    if (habit.backup) habit.backupHistory.push(date.toDateString());
+  } else if (status == 'backup') {
+    habit.backupHistory = habit.backupHistory.filter((item) => item !== date.toDateString());
   } else {
-    const history = habit.history[index];
-
-    if (history.status == "undone") history.status = "done";
-    else if (history.status == "done") {
-      if (habit.backup) history.status = "backup";
-      else history.status = "undone";
-    } else if (history.status == "backup") history.status = "undone";
+    habit.doneHistory.push(date.toDateString());
   }
 
   const habitIndex = user.habits.findIndex((item) => item._id == habit._id);
-  if (habitIndex !== -1) user.habits[habitIndex].history = [...habit.history];
+  if (habitIndex !== -1) user.habits[habitIndex] = habit;
 
   return user;
 };

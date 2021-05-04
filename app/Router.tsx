@@ -1,21 +1,23 @@
-import "react-native-gesture-handler";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import React, { FunctionComponent, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { Platform, SafeAreaView, StatusBar, Text, View } from "react-native";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import React, { FunctionComponent, useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Platform, SafeAreaView, StatusBar, Text, View } from 'react-native';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 
 const { Screen, Navigator } = createStackNavigator();
 
-import useLoadFonts from "@app/hooks/useLoadFonts";
+import useLoadFonts from '@app/hooks/useLoadFonts';
 
-import useUser from "@app/hooks/useUser";
+import useUser from '@app/hooks/useUser';
 
-import HabitsScreen from "@app/screens/HabitsScreen";
-import NewHabitScreen from "@app/screens/NewHabitScreen";
-import UpdateHabitScreen from "@app/screens/UpdateHabitScreen";
+import HabitsScreen from '@app/screens/HabitsScreen';
+import NewHabitScreen from '@app/screens/NewHabitScreen';
+import UpdateHabitScreen from '@app/screens/UpdateHabitScreen';
+import HabitStatsScreen from '@app/screens/HabitStatsScreen';
+import Typography from '@app/components/atoms/Typography';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -26,9 +28,10 @@ const MainStackScreen = () => (
       cardStyle: { opacity: 1, margin: 0, padding: 0 },
     }}
   >
-    <Screen name={"HabitsScreen"} component={HabitsScreen} />
-    <Screen name={"NewHabitScreen"} component={NewHabitScreen} />
-    <Screen name={"UpdateHabitScreen"} component={UpdateHabitScreen} />
+    <Screen name={'HabitsScreen'} component={HabitsScreen} />
+    <Screen name={'NewHabitScreen'} component={NewHabitScreen} />
+    <Screen name={'HabitStatsScreen'} component={HabitStatsScreen} />
+    <Screen name={'UpdateHabitScreen'} component={UpdateHabitScreen} />
   </Navigator>
 );
 
@@ -40,26 +43,21 @@ const Router: FunctionComponent = () => {
     initialLoad();
   }, []);
 
-  if (!fontsLoaded || !isUserLoaded || !user) return <Text>Loading...</Text>;
+  if (!fontsLoaded || !isUserLoaded || !user) return <Typography>Loading...</Typography>;
 
   return (
     <>
-      <NavigationContainer theme={{ colors: { background: "#0B0E11" } }}>
-        <Tab.Navigator
-          barStyle={{ backgroundColor: "#0B0E11" }}
-          labeled={false}
-        >
+      <NavigationContainer theme={{ colors: { background: '#0B0E11' } }}>
+        <Tab.Navigator barStyle={{ backgroundColor: '#0B0E11' }} labeled={false}>
           <Tab.Screen
-            name={"MainStack"}
+            name={'MainStack'}
             options={{
-              tabBarIcon: ({ color }) => (
-                <Ionicons name="ios-home" size={20} color={color} />
-              ),
+              tabBarIcon: ({ color }) => <Ionicons name="ios-home" size={20} color={color} />,
             }}
             component={MainStackScreen}
           />
           <Tab.Screen
-            name={"NewHabitsScreen"}
+            name={'NewHabitsScreen'}
             options={{
               tabBarIcon: ({ color }) => (
                 <Ionicons name="ios-stats-chart" size={20} color={color} />
@@ -68,11 +66,9 @@ const Router: FunctionComponent = () => {
             component={NewHabitScreen}
           />
           <Tab.Screen
-            name={"SettingsScreen"}
+            name={'SettingsScreen'}
             options={{
-              tabBarIcon: ({ color }) => (
-                <Ionicons name="settings-sharp" size={24} color={color} />
-              ),
+              tabBarIcon: ({ color }) => <Ionicons name="settings-sharp" size={24} color={color} />,
             }}
             component={NewHabitScreen}
           />
