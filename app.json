@@ -1,5 +1,6 @@
 {
   "expo": {
+    "backgroundColor": "#090C10",
     "name": "habits-mobile",
     "slug": "habits-mobile",
     "version": "1.0.0",

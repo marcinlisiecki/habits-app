@@ -3,7 +3,7 @@ import Typography from '@app/components/atoms/Typography';
 
 import useUser from '@app/hooks/useUser';
 import { changeHabitStatus } from '@app/mutations/habit';
-import { calculateStreak } from './utils';
+import { calculateStreak } from '@app/utils/habits';
 
 import { StyledWrapper } from './styles';
 import { useNavigation } from '@react-navigation/native';
@@ -20,7 +20,6 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
 
   const { name, backup } = habit;
   const streak = calculateStreak(habit, date);
-  // const streak = 1;
 
   const status = habit.doneHistory.includes(date.toDateString())
     ? 'done'

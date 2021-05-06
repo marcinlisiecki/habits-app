@@ -1,15 +1,15 @@
 import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import { View } from 'react-native';
 
+import { scrollToIndex, getInitialDate, filterHabitsByRepeat } from './utils';
+import { mutateMonthByHabitStatus } from '@app/utils/calendar';
 import useUser from '@app/hooks/useUser';
 
 import MainTemplate from '@app/templates/MainTemplate';
+
 import HabitsHeader from '@app/components/organisms/HabitsHeader';
 import HabitsList from '@app/components/organisms/HabitsList';
-
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import { Text, View } from 'react-native';
-import { scrollToIndex, getInitialDate, filterHabitsByRepeat } from './utils';
-import { mutateMonthByHabitStatus } from '@app/utils/calendar';
 import Typography from '@app/components/atoms/Typography';
 
 const HabitsScreen: FunctionComponent = () => {
@@ -23,7 +23,7 @@ const HabitsScreen: FunctionComponent = () => {
 
   useEffect(() => {
     scrollToIndex(listRef, selectedDate);
-  }, [listRef]);
+  }, [listRef, selectedDate]);
 
   useEffect(() => {
     if (!user) return;
@@ -35,17 +35,19 @@ const HabitsScreen: FunctionComponent = () => {
     const newDays: any[] = mutateMonthByHabitStatus(user.habits, selectedDate);
 
     setDays(newDays);
-  }, [user]);
+  }, [user, selectedDate]);
 
   const openDatePicker = () => setShowDatePicker(true);
 
-  const selectDay = useCallback((index: number): void => {
-    const day = new Date(selectedDate);
-    day.setDate(index + 1);
+  const selectDay = useCallback(
+    (index: number): void => {
+      const day = new Date(selectedDate);
+      day.setDate(index + 1);
 
-    setSelectedDate(day);
-    scrollToIndex(listRef, day);
-  }, []);
+      setSelectedDate(day);
+    },
+    [selectedDate]
+  );
 
   const handlePickDate = useCallback((date: Date) => {
     date.setHours(0, 0, 0, 0);
