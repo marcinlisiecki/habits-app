@@ -58,13 +58,20 @@ const HabitHistoryCalendar: FunctionComponent<Props> = ({ habit }) => {
 
         {days.map((day: any) => {
           const isGray = day.color == 'none';
-          const blackColor = day.color === 'warning';
 
           return (
             <StyledCalendarDay key={day.date} color={day.color}>
               <Typography
                 numberOfLines={1}
-                color={blackColor ? 'black' : isGray ? 'tertiary' : 'primary'}
+                color={
+                  isGray
+                    ? 'tertiary'
+                    : day.color === 'success'
+                    ? 'success'
+                    : day.color === 'warning'
+                    ? 'warning'
+                    : 'primary'
+                }
               >
                 {day.date.getDate()}
               </Typography>

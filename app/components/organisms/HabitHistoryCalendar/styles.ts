@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
 export const StyledCalendarWrapper = styled.View`
-  margin: 10px 4px;
+  margin: 10px 4px 30px 4px;
 `;
 
 export const StyledCalendarHeaderWrapper = styled.View`
@@ -27,7 +27,7 @@ export const StyledCalendarWeekday = styled.Text`
   max-width: 14.28%;
   text-align: center;
 
-  color: ${({ theme }) => theme.colors.text.special};
+  color: ${({ theme }) => theme.colors.text.secondary};
   font-weight: ${({ theme }) => theme.typography.fontWeight.black};
 `;
 
@@ -44,15 +44,15 @@ interface StyledCalendarDayProps {
   color?: 'danger' | 'warning' | 'success' | 'none';
 }
 
+// background-color: ${({ theme, color }) =>
+// color && (color === 'success' || color === 'warning')
+//   ? theme.colors[color][500]
+//   : 'transparent'};
+
 export const StyledCalendarDay = styled.View<StyledCalendarDayProps>`
   width: 12.7%;
   min-width: 12.7%;
   max-width: 12.7%;
-
-  background-color: ${({ theme, color }) =>
-    color && (color === 'success' || color === 'warning')
-      ? theme.colors[color][400]
-      : 'transparent'};
 
   border-radius: 20px;
 

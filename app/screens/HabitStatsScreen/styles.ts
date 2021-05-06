@@ -18,3 +18,38 @@ export const StyledHeaderContent = styled.View`
   align-items: center;
   flex-direction: row;
 `;
+
+export const StyledStatCardsWrapper = styled.View`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  justify-content: space-between;
+
+  padding: 0 0 50px 0;
+`;
+
+export const StyledCardWrapper = styled.View`
+  display: flex;
+  padding: 16px 10px 12px 10px;
+  margin-bottom: 12px;
+
+  min-height: 110px;
+
+  width: 48%;
+
+  background-color: ${({ theme }) => theme.colors.background.secondary};
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.colors.borderColors.primary};
+  border-radius: 10px;
+`;
+
+export const StyledCardContent = styled.View`
+  flex-direction: row;
+  flex: 2;
+  display: flex;
+  margin-top: 6px;
+
+  align-items: center;
+  justify-content: center;
+`;
