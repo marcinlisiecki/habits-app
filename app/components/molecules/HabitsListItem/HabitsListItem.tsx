@@ -8,6 +8,7 @@ import { calculateStreak } from '@app/utils/habits';
 import { StyledWrapper } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import moment from 'moment';
 
 interface Props {
   habit: Habit;
@@ -28,8 +29,10 @@ const HabitsListItem: FunctionComponent<Props> = ({ habit, date }) => {
     : 'undone';
 
   const handleClick = async () => {
-    if (!user) return;
-    await updateUser(changeHabitStatus({ user, habit, date }));
+    if (moment(date) <= moment(new Date())) {
+      if (!user) return;
+      await updateUser(changeHabitStatus({ user, habit, date }));
+    }
   };
 
   const handleLongPress = () => {

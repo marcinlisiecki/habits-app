@@ -26,7 +26,7 @@ export const StyledStatCardsWrapper = styled.View`
 
   justify-content: space-between;
 
-  padding: 0 0 50px 0;
+  padding: 10px 0 50px 0;
 `;
 
 export const StyledCardWrapper = styled.View`

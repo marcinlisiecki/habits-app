@@ -36,8 +36,6 @@ export const calculateStreak = (habit: Habit, date: Date) => {
     findIndexOfHistory(currentDate) !== -1 ||
     findIndexOfHistory(subtractDay(currentDate)) !== -1
   ) {
-    console.log(findIndexOfHistory(currentDate));
-
     if (findIndexOfHistory(currentDate) !== -1) {
       streak++;
     }
