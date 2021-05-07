@@ -1,12 +1,14 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, TouchableOpacity, View } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { LineChart, PieChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import 'moment-weekday-calc';
+import { deleteHabitData } from '@app/mutations/habit';
+import { enumerateDaysBetweenDates } from '@app/utils/calendar';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -23,21 +25,16 @@ import {
 import HabitHistoryCalendar from '@app/components/organisms/HabitHistoryCalendar';
 import { calculateStreak } from '@app/utils/habits';
 import moment from 'moment';
+import { deleteHabit } from '@app/mutations/habit';
+import useUser from '@app/hooks/useUser';
 
 interface Props {
   route: RouteProp<StackParams, 'HabitStatsScreen'>;
 }
 
-function enumerateDaysBetweenDates(startDate: any, endDate: any) {
-  let date = [];
-  while (moment(startDate) <= moment(endDate)) {
-    date.push(startDate);
-    startDate = moment(startDate).add(1, 'days').format('YYYY-MM-DD');
-  }
-  return date;
-}
-
 const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
+  const { user, updateUser } = useUser();
+
   const [weeklyDoneChartData, setWeeklyDoneChartData] = useState<any[] | null>(null);
   const [weeklyDoneChartArray, setWeeklyDoneChartArray] = useState<any[] | null>(null);
   const [weeklyDoneChartLabels, setWeeklyDoneChartLabels] = useState<any[] | null>(null);
@@ -146,6 +143,50 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
       )
     );
   }, [weeklyDoneChartArray]);
+
+  const handleDeleteDataAsk = () => {
+    Alert.alert('Are you sure?', "Are you sure you want to delete this habit's data?", [
+      {
+        text: 'Cancel',
+
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => handleDeleteData(),
+        style: 'destructive',
+      },
+    ]);
+  };
+
+  const handleDeleteData = () => {
+    if (!user) return;
+
+    updateUser(deleteHabitData(user, habit._id));
+    navigation.navigate('HabitsScreen');
+  };
+
+  const handleDeleteAsk = () => {
+    Alert.alert('Are you sure?', 'Are you sure you want to delete this habit?', [
+      {
+        text: 'Cancel',
+
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => handleDelete(),
+        style: 'destructive',
+      },
+    ]);
+  };
+
+  const handleDelete = () => {
+    if (!user) return;
+
+    updateUser(deleteHabit(user, habit._id));
+    navigation.navigate('HabitsScreen');
+  };
 
   if (!weeklyDoneChartLabels || !weeklyDoneChartArray || !weeklyDoneChartData)
     return (
@@ -369,6 +410,17 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
           </StyledStatCardsWrapper>
 
           <HabitHistoryCalendar habit={habit} />
+
+          <TouchableOpacity onPress={handleDeleteDataAsk}>
+            <Typography margin={'20px 0 20px 0'} isCentered color={'warning'}>
+              Reset habit data
+            </Typography>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleDeleteAsk}>
+            <Typography margin={'0 0 50px 0'} isCentered color={'error'}>
+              Delete habit
+            </Typography>
+          </TouchableOpacity>
         </ScrollView>
       </MainTemplate>
     </>

@@ -1,4 +1,5 @@
 import { getDaysInMonth } from '@app/utils/date';
+import moment from 'moment';
 
 export const mutateMonthByHabitStatus = (habits: Habit[] | Habit, selectedDate: Date) => {
   return getDaysInMonth(selectedDate.getMonth(), selectedDate.getFullYear()).map((day: any) => {
@@ -39,3 +40,12 @@ export const mutateMonthByHabitStatus = (habits: Habit[] | Habit, selectedDate: 
     };
   });
 };
+
+export function enumerateDaysBetweenDates(startDate: any, endDate: any) {
+  let date = [];
+  while (moment(startDate) <= moment(endDate)) {
+    date.push(startDate);
+    startDate = moment(startDate).add(1, 'days').format('YYYY-MM-DD');
+  }
+  return date;
+}

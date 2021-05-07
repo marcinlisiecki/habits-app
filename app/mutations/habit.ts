@@ -49,3 +49,13 @@ export const deleteHabit = (user: User, id: string) => {
   newUser.habits = newUser.habits.filter((habit: Habit) => habit._id !== id);
   return newUser;
 };
+
+export const deleteHabitData = (user: User, id: string) => {
+  const newUser: User = { ...user };
+
+  const index = newUser.habits.findIndex((item) => item._id == id);
+  newUser.habits[index].doneHistory = [];
+  newUser.habits[index].backupHistory = [];
+
+  return newUser;
+};
