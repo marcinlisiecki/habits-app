@@ -30,6 +30,7 @@ interface Props {
 const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
   const [weeklyDoneChartData, setWeeklyDoneChartData] = useState<any[]>([]);
   const [weeklyDoneChartArray, setWeeklyDoneChartArray] = useState<any[]>([]);
+  const [weeklyDoneChartLabels, setWeeklyDoneChartLabels] = useState<any[]>([]);
 
   const navigation = useNavigation<StackNavigationProp<StackParams>>();
   const habit: Habit = route.params.habit;
@@ -56,9 +57,13 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
 
   useEffect(() => {
     const chartArray: any = [];
+    const labelArray: any = [];
 
     let currentDate = new Date(firstDay);
-    while (moment(currentDate).isBefore(new Date(lastDay))) {
+    while (
+      moment(currentDate).isBefore(new Date(lastDay)) ||
+      moment(currentDate).isSame(new Date(lastDay))
+    ) {
       const thisWeekDone = habit.doneHistory
         .filter((item) =>
           moment(item).isBetween(
@@ -80,25 +85,24 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
         );
 
       chartArray.push([...thisWeekDone]);
+      labelArray.push(
+        `${moment(new Date(currentDate)).format('DD')} - ${moment(currentDate)
+          .add(1, 'weeks')
+          .subtract('1', 'day')
+          .format('DD')}`
+      );
+
       currentDate = moment(currentDate).add(1, 'week').toDate();
     }
 
     setWeeklyDoneChartArray(chartArray);
+    setWeeklyDoneChartLabels(labelArray);
   }, []);
 
   useEffect(() => {
     console.log(weeklyDoneChartData);
     setWeeklyDoneChartData([...weeklyDoneChartArray.map((item: any) => item.length)]);
   }, [weeklyDoneChartArray]);
-
-  const labels = [
-    ...weeklyDoneChartArray.map(
-      (item) =>
-        `${moment(item[item.length - 1]).format('DD')} - ${moment(item[item.length - 1])
-          .add(1, 'week')
-          .format('DD')}`
-    ),
-  ];
 
   return (
     <>
@@ -163,56 +167,54 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
             </StyledCardWrapper>
           </StyledStatCardsWrapper>
 
-          {weeklyDoneChartData.length ? (
-            <>
-              <Typography isCentered margin={'0 0 20px 0'} color={'secondary'}>
-                Weekly done
-              </Typography>
-              <LineChart
-                fromZero
-                data={{
-                  labels: labels,
-                  datasets: [
-                    {
-                      data: weeklyDoneChartData,
-                    },
-                    {
-                      data: [habit.repeat.length],
-                      withDots: false,
-                    },
-                  ],
-                }}
-                formatYLabel={(yValue) => yValue}
-                height={200}
-                width={Dimensions.get('window').width}
-                chartConfig={{
-                  backgroundColor: '#0B0E11',
-                  backgroundGradientFrom: '#0B0E11',
-                  backgroundGradientTo: '#0B0E11',
-                  decimalPlaces: 0,
-                  color: (opacity = 1) => `rgba(106, 223, 166, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                  style: {
-                    borderRadius: 16,
+          <>
+            <Typography isCentered margin={'0 0 20px 0'} color={'secondary'}>
+              Weekly done
+            </Typography>
+            <LineChart
+              fromZero
+              data={{
+                labels: weeklyDoneChartLabels,
+                datasets: [
+                  {
+                    data: weeklyDoneChartData.length ? weeklyDoneChartData : [0],
                   },
-                  propsForDots: {
-                    r: '4',
-                    strokeWidth: '2',
-                    stroke: '#6ADFA6',
-                    fill: '#6ADFA6',
+                  {
+                    data: [habit.repeat.length],
+                    withDots: false,
                   },
-                }}
-                bezier
-                segments={habit.repeat.length}
-                style={{
-                  margin: 0,
-                  padding: 0,
-                  marginLeft: -30,
-                  marginBottom: 50,
-                }}
-              />
-            </>
-          ) : null}
+                ],
+              }}
+              formatYLabel={(yValue) => yValue}
+              height={200}
+              width={Dimensions.get('window').width}
+              chartConfig={{
+                backgroundColor: '#0B0E11',
+                backgroundGradientFrom: '#0B0E11',
+                backgroundGradientTo: '#0B0E11',
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(106, 223, 166, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                },
+                propsForDots: {
+                  r: '4',
+                  strokeWidth: '2',
+                  stroke: '#6ADFA6',
+                  fill: '#6ADFA6',
+                },
+              }}
+              bezier
+              segments={habit.repeat.length}
+              style={{
+                margin: 0,
+                padding: 0,
+                marginLeft: -30,
+                marginBottom: 50,
+              }}
+            />
+          </>
 
           <HabitHistoryCalendar habit={habit} />
         </ScrollView>
