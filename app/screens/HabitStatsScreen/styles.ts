@@ -37,11 +37,6 @@ export const StyledCardWrapper = styled.View`
   min-height: 110px;
 
   width: 48%;
-
-  background-color: ${({ theme }) => theme.colors.background.secondary};
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.colors.borderColors.primary};
-  border-radius: 10px;
 `;
 
 export const StyledCardContent = styled.View`

@@ -1,11 +1,11 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { ScrollView } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import { LineChart } from 'react-native-chart-kit';
+import { Dimensions } from 'react-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -28,32 +28,77 @@ interface Props {
 }
 
 const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
+  const [weeklyDoneChartData, setWeeklyDoneChartData] = useState<any[]>([]);
+  const [weeklyDoneChartArray, setWeeklyDoneChartArray] = useState<any[]>([]);
+
   const navigation = useNavigation<StackNavigationProp<StackParams>>();
   const habit: Habit = route.params.habit;
 
   const currentStreak: number = calculateStreak(habit, new Date());
   const totalDone: number = habit.doneHistory.length + habit.backupHistory.length;
 
-  // const doneHistory = habit.doneHistory.sort(
-  //   (a: any, b: any) => new Date(a).getTime() - new Date(b).getTime()
-  // );
-  // const backupHistory = habit.backupHistory.sort(
-  //   (a: any, b: any) => new Date(a).getTime() - new Date(b).getTime()
-  // );
-  //
-  // const firstDay = Math.min(
-  //   new Date(doneHistory[0]).getTime() || Infinity,
-  //   new Date(backupHistory[0]).getTime() || Infinity
-  // );
-  //
-  // const lastDay = Math.max(
-  //   new Date(doneHistory.reverse()[0]).getTime() || -Infinity,
-  //   new Date(backupHistory.reverse()[0]).getTime() || -Infinity
-  // );
-  //
-  // const firstDayToTodayDifference = moment(lastDay).diff(firstDay, 'days');
-  //
-  // const percentageOfDone = Math.round((totalDone / firstDayToTodayDifference) * 100);
+  const doneHistory = habit.doneHistory.sort(
+    (a: any, b: any) => new Date(a).getTime() - new Date(b).getTime()
+  );
+  const backupHistory = habit.backupHistory.sort(
+    (a: any, b: any) => new Date(a).getTime() - new Date(b).getTime()
+  );
+
+  const firstDay = Math.min(
+    new Date(doneHistory[0]).getTime() || Infinity,
+    new Date(backupHistory[0]).getTime() || Infinity
+  );
+
+  const lastDay = Math.max(
+    new Date(doneHistory.reverse()[0]).getTime() || -Infinity,
+    new Date(backupHistory.reverse()[0]).getTime() || -Infinity
+  );
+
+  useEffect(() => {
+    const chartArray: any = [];
+
+    let currentDate = new Date(firstDay);
+    while (moment(currentDate).isBefore(new Date(lastDay))) {
+      const thisWeekDone = habit.doneHistory
+        .filter((item) =>
+          moment(item).isBetween(
+            new Date(currentDate),
+            moment(currentDate).add(1, 'weeks'),
+            undefined,
+            '[)'
+          )
+        )
+        .concat(
+          habit.backupHistory.filter((item) =>
+            moment(item).isBetween(
+              new Date(currentDate),
+              moment(currentDate).add(1, 'weeks'),
+              undefined,
+              '[)'
+            )
+          )
+        );
+
+      chartArray.push([...thisWeekDone]);
+      currentDate = moment(currentDate).add(1, 'week').toDate();
+    }
+
+    setWeeklyDoneChartArray(chartArray);
+  }, []);
+
+  useEffect(() => {
+    console.log(weeklyDoneChartData);
+    setWeeklyDoneChartData([...weeklyDoneChartArray.map((item: any) => item.length)]);
+  }, [weeklyDoneChartArray]);
+
+  const labels = [
+    ...weeklyDoneChartArray.map(
+      (item) =>
+        `${moment(item[item.length - 1]).format('DD')} - ${moment(item[item.length - 1])
+          .add(1, 'week')
+          .format('DD')}`
+    ),
+  ];
 
   return (
     <>
@@ -116,33 +161,59 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
                 <FontAwesome name="check" size={32} color="#4ADE80" />
               </StyledCardContent>
             </StyledCardWrapper>
-
-            {/*<StyledCardWrapper>*/}
-            {/*  <Typography isCentered color={'secondary'}>*/}
-            {/*    Total days*/}
-            {/*  </Typography>*/}
-
-            {/*  <StyledCardContent>*/}
-            {/*    <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>*/}
-            {/*      {firstDayToTodayDifference}*/}
-            {/*    </Typography>*/}
-            {/*    <MaterialIcons name="hourglass-top" size={32} color="#4ADE80" />*/}
-            {/*  </StyledCardContent>*/}
-            {/*</StyledCardWrapper>*/}
-
-            {/*<StyledCardWrapper>*/}
-            {/*  <Typography isCentered color={'secondary'}>*/}
-            {/*    % of Done*/}
-            {/*  </Typography>*/}
-
-            {/*  <StyledCardContent>*/}
-            {/*    <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>*/}
-            {/*      {percentageOfDone}*/}
-            {/*    </Typography>*/}
-            {/*    <FontAwesome5 name="percentage" size={32} color="#4ADE80" />*/}
-            {/*  </StyledCardContent>*/}
-            {/*</StyledCardWrapper>*/}
           </StyledStatCardsWrapper>
+
+          {weeklyDoneChartData.length ? (
+            <>
+              <Typography isCentered margin={'0 0 20px 0'} color={'secondary'}>
+                Weekly done
+              </Typography>
+              <LineChart
+                fromZero
+                data={{
+                  labels: labels,
+                  datasets: [
+                    {
+                      data: weeklyDoneChartData,
+                    },
+                    {
+                      data: [habit.repeat.length],
+                      withDots: false,
+                    },
+                  ],
+                }}
+                formatYLabel={(yValue) => yValue}
+                height={200}
+                width={Dimensions.get('window').width}
+                chartConfig={{
+                  backgroundColor: '#0B0E11',
+                  backgroundGradientFrom: '#0B0E11',
+                  backgroundGradientTo: '#0B0E11',
+                  decimalPlaces: 0,
+                  color: (opacity = 1) => `rgba(106, 223, 166, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  style: {
+                    borderRadius: 16,
+                  },
+                  propsForDots: {
+                    r: '4',
+                    strokeWidth: '2',
+                    stroke: '#6ADFA6',
+                    fill: '#6ADFA6',
+                  },
+                }}
+                bezier
+                segments={habit.repeat.length}
+                style={{
+                  margin: 0,
+                  padding: 0,
+                  marginLeft: -30,
+                  marginBottom: 50,
+                }}
+              />
+            </>
+          ) : null}
+
           <HabitHistoryCalendar habit={habit} />
         </ScrollView>
       </MainTemplate>
