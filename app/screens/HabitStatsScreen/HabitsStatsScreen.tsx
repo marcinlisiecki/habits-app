@@ -1,19 +1,32 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ActivityIndicator, Alert, ScrollView, TouchableOpacity, View } from 'react-native';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-import { LineChart, PieChart } from 'react-native-chart-kit';
-import { Dimensions } from 'react-native';
-import 'moment-weekday-calc';
-import { deleteHabitData } from '@app/mutations/habit';
-import { enumerateDaysBetweenDates } from '@app/utils/calendar';
+import { Alert, ScrollView, TouchableOpacity } from 'react-native';
+import moment from 'moment';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 
-import MainTemplate from '@app/templates/MainTemplate';
+import { deleteHabitData } from '@app/mutations/habit';
+import { calculateStreak } from '@app/utils/habits';
+import { deleteHabit } from '@app/mutations/habit';
+import useUser from '@app/hooks/useUser';
+
+import HabitHistoryCalendar from '@app/components/organisms/HabitHistoryCalendar';
+import CustomLineChart from '@app/components/molecules/CustomLineChart';
+import CustomPieChart from '@app/components/molecules/CustomPieChart';
+import LoadingScreen from '@app/components/atoms/LoadingScreen';
 import Typography from '@app/components/atoms/Typography';
+import MainTemplate from '@app/templates/MainTemplate';
+
+import {
+  calculateBestStreak,
+  getFirstHabitHistoryDay,
+  getLastHabitHistoryDay,
+  getPieChartData,
+  getTotalDays,
+} from './utils';
 
 import {
   StyledHeader,
@@ -22,11 +35,6 @@ import {
   StyledCardWrapper,
   StyledStatCardsWrapper,
 } from './styles';
-import HabitHistoryCalendar from '@app/components/organisms/HabitHistoryCalendar';
-import { calculateStreak } from '@app/utils/habits';
-import moment from 'moment';
-import { deleteHabit } from '@app/mutations/habit';
-import useUser from '@app/hooks/useUser';
 
 interface Props {
   route: RouteProp<StackParams, 'HabitStatsScreen'>;
@@ -45,45 +53,18 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
   const habit: Habit = route.params.habit;
 
   const totalDone: number = habit.doneHistory.length + habit.backupHistory.length;
-
   const totalMainGoalDone: number = habit.doneHistory.length;
   const totalBackupGoalDone: number = habit.backupHistory.length;
 
-  const doneHistory = habit.doneHistory.sort(
-    (a: any, b: any) => new Date(a).getTime() - new Date(b).getTime()
-  );
-  const backupHistory = habit.backupHistory.sort(
-    (a: any, b: any) => new Date(a).getTime() - new Date(b).getTime()
-  );
+  const firstDay = getFirstHabitHistoryDay(habit);
+  const lastDay = getLastHabitHistoryDay(habit);
 
-  const firstDay = Math.min(
-    new Date(doneHistory[0]).getTime() || Infinity,
-    new Date(backupHistory[0]).getTime() || Infinity
-  );
-
-  const lastDay = Math.max(
-    new Date(doneHistory.reverse()[0]).getTime() || -Infinity,
-    new Date(backupHistory.reverse()[0]).getTime() || -Infinity
-  );
-
-  // @ts-ignore
-  const totalDays = moment().weekdayCalc({
-    rangeStart: firstDay,
-    rangeEnd: lastDay,
-    weekdays: habit.repeat,
-  });
+  const totalDays = getTotalDays(habit);
   const totalUndone = totalDays - totalDone;
 
   useEffect(() => {
     setCurrentStreak(calculateStreak(habit, new Date()));
-    setBestStreak(
-      Math.max(
-        ...enumerateDaysBetweenDates(new Date(firstDay), new Date(lastDay)).map((day) => {
-          return calculateStreak(habit, new Date(day));
-        }),
-        0
-      )
-    );
+    setBestStreak(calculateBestStreak(habit));
   }, []);
 
   useEffect(() => {
@@ -189,19 +170,22 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
   };
 
   if (!weeklyDoneChartLabels || !weeklyDoneChartArray || !weeklyDoneChartData)
-    return (
-      <View
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          height: '100%',
-        }}
-      >
-        <ActivityIndicator color={'#40D68D'} size={'large'} />
-      </View>
-    );
+    return <LoadingScreen />;
+
+  const statsItem = (title: string, value: string | number, icon: any) => (
+    <StyledCardWrapper>
+      <Typography isCentered color={'secondary'}>
+        {title}
+      </Typography>
+
+      <StyledCardContent>
+        <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>
+          {value}
+        </Typography>
+        {icon}
+      </StyledCardContent>
+    </StyledCardWrapper>
+  );
 
   return (
     <>
@@ -238,178 +222,74 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
             width: '100%',
           }}
         >
+          <HabitHistoryCalendar habit={habit} />
+
           <>
             <Typography isCentered margin={'0 0 20px 0'} color={'secondary'}>
               Weekly done
             </Typography>
-            <LineChart
-              fromZero
-              data={{
-                labels: weeklyDoneChartLabels,
-                datasets: [
-                  {
-                    data: weeklyDoneChartData.length ? weeklyDoneChartData : [0],
-                  },
-                  {
-                    data: [habit.repeat.length],
-                    withDots: false,
-                  },
-                ],
-              }}
-              formatYLabel={(yValue) => yValue}
-              height={200}
-              width={Dimensions.get('window').width}
-              chartConfig={{
-                backgroundColor: '#0B0E11',
-                backgroundGradientFrom: '#0B0E11',
-                backgroundGradientTo: '#0B0E11',
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(106, 223, 166, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                style: {
-                  borderRadius: 16,
-                },
-                propsForDots: {
-                  r: '4',
-                  strokeWidth: '2',
-                  stroke: '#6ADFA6',
-                  fill: '#6ADFA6',
-                },
-              }}
-              bezier
+            <CustomLineChart
               segments={habit.repeat.length}
-              style={{
-                margin: 0,
-                padding: 0,
-                marginLeft: -30,
-                marginBottom: 50,
-              }}
+              labels={weeklyDoneChartLabels}
+              datasets={[
+                {
+                  data: weeklyDoneChartData.length ? weeklyDoneChartData : [0],
+                },
+                {
+                  data: [habit.repeat.length],
+                  withDots: false,
+                },
+              ]}
             />
           </>
 
-          {totalMainGoalDone + totalBackupGoalDone + totalUndone > 0 && (
-            <PieChart
-              data={[
-                {
-                  name: 'Main goal',
-                  color: '#40D68D',
-                  count: totalMainGoalDone || 0,
-                  legendFontColor: '#fff',
-                },
-                {
-                  name: 'Backup goal',
-                  color: '#EAB308',
-                  count: totalBackupGoalDone || 0,
-                  legendFontColor: '#fff',
-                },
-                {
-                  name: 'Undone',
-                  color: '#E64C4C',
-                  count: totalUndone || 0,
-                  legendFontColor: '#fff',
-                },
-              ]}
-              width={Dimensions.get('window').width}
-              height={200}
-              accessor={'count'}
-              backgroundColor={'transparent'}
-              paddingLeft={'0'}
-              chartConfig={{
-                backgroundColor: '#0B0E11',
-                backgroundGradientFrom: '#0B0E11',
-                backgroundGradientTo: '#0B0E11',
-                color: (opacity = 1) => `rgba(106, 223, 166, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              }}
-              style={{ marginBottom: 40 }}
-            />
-          )}
-
           <StyledStatCardsWrapper>
-            <StyledCardWrapper>
-              <Typography isCentered color={'secondary'}>
-                Current Streak
-              </Typography>
+            {statsItem(
+              'Current Streak',
+              currentStreak,
+              <FontAwesome5 name="fire" size={32} color="#4ADE80" />
+            )}
 
-              <StyledCardContent>
-                <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>
-                  {currentStreak}
-                </Typography>
-                <FontAwesome5 name="fire" size={32} color="#4ADE80" />
-              </StyledCardContent>
-            </StyledCardWrapper>
+            {statsItem(
+              'Best Streak',
+              bestStreak,
+              <FontAwesome5 name="fire" size={32} color="#4ADE80" />
+            )}
 
-            <StyledCardWrapper>
-              <Typography isCentered color={'secondary'}>
-                Best Streak
-              </Typography>
-
-              <StyledCardContent>
-                <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>
-                  {bestStreak}
-                </Typography>
-                <FontAwesome5 name="fire" size={32} color="#4ADE80" />
-              </StyledCardContent>
-            </StyledCardWrapper>
-
-            <StyledCardWrapper>
-              <Typography isCentered color={'secondary'}>
-                Total Done
-              </Typography>
-
-              <StyledCardContent>
-                <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>
-                  {totalDone}
-                </Typography>
-                <FontAwesome name="check" size={32} color="#4ADE80" />
-              </StyledCardContent>
-            </StyledCardWrapper>
+            {statsItem(
+              'Total Done',
+              totalDone,
+              <FontAwesome name="check" size={32} color="#4ADE80" />
+            )}
 
             {habit.backup && (
               <>
-                <StyledCardWrapper>
-                  <Typography isCentered color={'secondary'}>
-                    Total main Goal
-                  </Typography>
+                {statsItem(
+                  'Total main Goal',
+                  totalMainGoalDone,
+                  <FontAwesome name="check" size={32} color="#4ADE80" />
+                )}
 
-                  <StyledCardContent>
-                    <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>
-                      {totalMainGoalDone}
-                    </Typography>
-                    <FontAwesome name="check" size={32} color="#4ADE80" />
-                  </StyledCardContent>
-                </StyledCardWrapper>
+                {statsItem(
+                  'Total backup Goal',
+                  totalBackupGoalDone,
+                  <FontAwesome name="check" size={32} color="#EAB308" />
+                )}
 
-                <StyledCardWrapper>
-                  <Typography isCentered color={'secondary'}>
-                    Total backup Goal
-                  </Typography>
-
-                  <StyledCardContent>
-                    <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>
-                      {totalBackupGoalDone}
-                    </Typography>
-                    <FontAwesome name="check" size={32} color="#EAB308" />
-                  </StyledCardContent>
-                </StyledCardWrapper>
-
-                <StyledCardWrapper>
-                  <Typography isCentered color={'secondary'}>
-                    Main goal %
-                  </Typography>
-
-                  <StyledCardContent>
-                    <Typography weight={700} size={'h2'} color={'primary'} margin={'0 10px 0 0'}>
-                      {Math.round((totalMainGoalDone / totalDone) * 100) || 0}
-                    </Typography>
-                    <FontAwesome5 name="percentage" size={32} color="#4ADE80" />
-                  </StyledCardContent>
-                </StyledCardWrapper>
+                {statsItem(
+                  'Main goal %',
+                  Math.round((totalMainGoalDone / totalDone) * 100) || 0,
+                  <FontAwesome5 name="percentage" size={32} color="#4ADE80" />
+                )}
               </>
             )}
           </StyledStatCardsWrapper>
 
-          <HabitHistoryCalendar habit={habit} />
+          {totalMainGoalDone + totalBackupGoalDone + totalUndone > 0 && (
+            <CustomPieChart
+              data={getPieChartData(totalMainGoalDone, totalBackupGoalDone, totalUndone)}
+            />
+          )}
 
           <TouchableOpacity onPress={handleDeleteDataAsk}>
             <Typography margin={'20px 0 20px 0'} isCentered color={'warning'}>

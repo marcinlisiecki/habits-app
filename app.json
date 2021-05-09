@@ -1,7 +1,7 @@
 {
   "expo": {
     "backgroundColor": "#090C10",
-    "name": "habits-mobile",
+    "name": "Habits",
     "slug": "habits-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
