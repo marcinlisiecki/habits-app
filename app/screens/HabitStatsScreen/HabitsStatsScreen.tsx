@@ -56,8 +56,8 @@ const HabitsStatsScreen: FunctionComponent<Props> = ({ route }) => {
   const totalMainGoalDone: number = habit.doneHistory.length;
   const totalBackupGoalDone: number = habit.backupHistory.length;
 
-  const firstDay = getFirstHabitHistoryDay(habit);
-  const lastDay = getLastHabitHistoryDay(habit);
+  const lastDay = new Date(new Date().toDateString()).getTime();
+  const firstDay = moment(lastDay).subtract(5, 'weeks').toDate().getTime();
 
   const totalDays = getTotalDays(habit);
   const totalUndone = totalDays - totalDone;

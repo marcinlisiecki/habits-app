@@ -32,7 +32,7 @@ export const calculateBestStreak = (habit: Habit) =>
 export const getTotalDays = (habit: Habit) =>
   moment().weekdayCalc({
     rangeStart: getFirstHabitHistoryDay(habit),
-    rangeEnd: getLastHabitHistoryDay(habit),
+    rangeEnd: new Date(new Date().toDateString()).getTime(),
     weekdays: habit.repeat,
   });
 
